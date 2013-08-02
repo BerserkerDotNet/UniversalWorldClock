@@ -13,7 +13,7 @@
     <Page.DataContext>
         <Binding Path="Main" Source="{StaticResource ResourceKey=ViewStorage}"/>
     </Page.DataContext>
-    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}"  Style="{StaticResource LayoutRootStyle}">
+    <Grid  Style="{StaticResource LayoutRootStyle}">
         <Grid.RowDefinitions>
             <RowDefinition Height="140"/>
             <RowDefinition Height="*"/>
@@ -25,7 +25,7 @@
         <Grid Grid.Row="1">
             <GridView ItemsSource="{Binding Clocks}" 
                   VerticalContentAlignment="Stretch" 
-                  SelectionMode="Single"
+                  SelectionMode="None"
                   Margin="0,-238,0,0"
                   Padding="110,240,110,46"
                   IsDoubleTapEnabled="True"
@@ -93,9 +93,10 @@
     </Grid>
     <Page.BottomAppBar>
         <AppBar>
-            <Grid x:Name="uiAppBarShiftView" HorizontalAlignment="Left" Width="400">
+            <Grid x:Name="uiAppBarShiftView" HorizontalAlignment="Left" Width="490">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
+                    <ColumnDefinition Width="90"/>
                     <ColumnDefinition Width="90"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
@@ -118,6 +119,11 @@
                         AutomationProperties.Name="Clear Shift"
                         VerticalAlignment="Bottom"
                         Command="{Binding ClearTimeShift}"/>
+                <Button Grid.Column="2" Grid.RowSpan="2" 
+                        Style="{StaticResource AddAppBarButtonStyle}"
+                         AutomationProperties.Name="Add Clock"
+                        VerticalAlignment="Bottom"
+                        Command="{Binding Add}"/>
             </Grid>
         </AppBar>
     </Page.BottomAppBar>

@@ -57,7 +57,8 @@ namespace UniversalWorldClock.ViewModels
         #endregion
 
         #region Public Properties
-        public ICommand ClearTimeShift { get; set; }
+        public ICommand ClearTimeShift { get; private set; }
+        public ICommand Add { get; private set; }
 
         public ViewModelBase CurrentContent
         {
@@ -115,25 +116,29 @@ namespace UniversalWorldClock.ViewModels
             }
         }
 
-        public TimeSpan TimeShift { get { return _globalTimeShift; } } 
+        public TimeSpan TimeShift { get { return _globalTimeShift; } }
+
         #endregion
 
         #region Private Methods
         private async void Initialize()
         {
+            SearchPaneSetup();
             ClearTimeShift = new RelayCommand(() =>
                                                   {
                                                       GlobalHourTimeShift = 0;
                                                       GlobalMinuteTimeShift = 0;
                                                   });
+            Add = new RelayCommand(() => SearchPane.GetForCurrentView().Show());
             var clocks = await _clocksRepository.Get();
             _cities = await _citiesRepository.Get();
             Clocks = new ObservableCollection<ClockInfo>(clocks);
-            SearchPaneSetup();
+            
         }
 
         private void SearchPaneSetup()
         {
+            _searchPane.PlaceholderText = "City name";
             _searchPane.ShowOnKeyboardInput = true;
             _searchPane.QuerySubmitted += OnSearchPaneQuerySubmitted;
             _searchPane.SuggestionsRequested += OnSearchPaneSuggestionsRequested;

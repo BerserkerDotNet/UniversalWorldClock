@@ -153,7 +153,9 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="Assets\background.jpg" />
     <Content Include="Assets\city.png" />
+    <Content Include="Assets\clockBG.jpg" />
     <Content Include="Assets\CountryFlags\ad.png" />
     <Content Include="Assets\CountryFlags\ae.png" />
     <Content Include="Assets\CountryFlags\af.png" />

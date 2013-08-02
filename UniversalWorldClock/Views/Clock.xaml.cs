@@ -89,5 +89,21 @@ namespace UniversalWorldClock.Views
                 _markersCanvas.Children.Add(tb);
             }
         }
+
+        private void normalClock_PointerEntered_1(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        {
+            uiClockOptions.Visibility = Visibility.Visible;
+        }
+
+        private void normalClock_PointerExited_1(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        {
+            uiClockOptions.Visibility = Visibility.Collapsed;
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            uiCityName.Visibility = Visibility.Collapsed;
+            uiClockNameEditor.Visibility = Visibility.Visible;
+        }
     }
 }

@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Common="using:UniversalWorldClock.Common" xmlns:Converters="using:UniversalWorldClock.Converters"
     mc:Ignorable="d"
+    Background="Azure"
     d:DesignHeight="150"
     d:DesignWidth="400">
     <UserControl.Resources>
@@ -16,7 +17,8 @@
         <Converters:CountryCodeToFlagFilePathConveretr x:Key="CountryCodeToFilePathConverter"/>
     </UserControl.Resources>
     <Grid>
-        <Grid x:Name="normalClock">
+        
+        <Grid x:Name="normalClock" PointerEntered="normalClock_PointerEntered_1" PointerExited="normalClock_PointerExited_1">
             <Grid.Resources>
                 <x:Double x:Key="CanvasWidth">250</x:Double>
                 <x:Double x:Key="CanvasHeight">215</x:Double>
@@ -53,43 +55,34 @@
                 <Converters:MarginObjectSizeConverter x:Key="MarginSizeConverter"/>
             </Grid.Resources>
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.4*"/>
+                <RowDefinition Height="30"/>
                 <RowDefinition />
                 <RowDefinition Height="0.4*"/>
             </Grid.RowDefinitions>
-            <Image Source="{Binding Path= CountryCode, Converter={StaticResource CountryCodeToFilePathConverter}}" 
-               Height="{Binding Source={StaticResource FlagHeight}, Converter={StaticResource SizeConverter}}" HorizontalAlignment="Center" VerticalAlignment="Top"
-               Margin="{Binding Source={StaticResource FlagMargin}, Converter={StaticResource MarginSizeConverter}}"
-               Grid.Row="1"/>
-            <TextBlock Text="{Binding CountryName}"
-                   Grid.Row="1" 
-                   VerticalAlignment="Bottom" HorizontalAlignment="Center" MaxWidth="150" 
-                   TextAlignment="Center"
-                   Margin="{Binding Source={StaticResource CountryNameMargin}, Converter={StaticResource MarginSizeConverter}}" 
-                       Style="{StaticResource TitleTextStyle}"
-                       FontSize="{Binding Source={StaticResource CountryTextSize}, Converter={StaticResource SizeConverter}}"/>
-
+            <Rectangle Fill="Transparent" Grid.RowSpan="3"/><!--Ugly trick to make pointer Enter/Exit working-->
             <Canvas x:Name="_markersCanvas" Grid.ColumnSpan="2" Grid.Row="1" 
                 Width="{Binding Source={StaticResource CanvasWidth}, Converter={StaticResource SizeConverter}}" 
                 Height="{Binding Source={StaticResource CanvasHeight}, Converter={StaticResource SizeConverter}}" 
                 HorizontalAlignment="Center" 
                 VerticalAlignment="Center">
+
                 <Ellipse Grid.Column="0" Grid.Row="1" 
                          Height="{Binding Source={StaticResource EllipseHeight}, Converter={StaticResource SizeConverter}}" 
                          Width="{Binding Source={StaticResource EllipseWidth}, Converter={StaticResource SizeConverter}}" Stroke="Gray" 
                      Canvas.Top="{Binding Source={StaticResource EllipseTopOffset}, Converter={StaticResource SizeConverter}}" 
                      Canvas.Left="{Binding Source={StaticResource EllipseLeftOffset}, Converter={StaticResource SizeConverter}}">
                     <Ellipse.Fill>
-                        <LinearGradientBrush SpreadMethod="Pad" >
-                            <GradientStop Offset="0.0" Color="Transparent" />
+                        <ImageBrush ImageSource="/Assets/clockBG.jpg" />
+                        <!--<LinearGradientBrush SpreadMethod="Pad" >
+                            <GradientStop Offset="0.0" Color="Black" />
                             <GradientStop Offset="0.4" Color="#30ffffff" />
                             <GradientStop Offset="0.5" Color="#60ffffff" />
                             <GradientStop Offset="0.6" Color="#3fffffff" />
-                            <GradientStop Offset="1.0" Color="Transparent" />
-                        </LinearGradientBrush >
+                            <GradientStop Offset="1.0" Color="black" />
+                        </LinearGradientBrush >-->
                     </Ellipse.Fill>
                 </Ellipse>
-                <Rectangle Grid.Column="0" Grid.Row="1" 
+                <Rectangle Grid.Column="0" Grid.Row="1"
                            Width="{Binding Source={StaticResource HoursArrowWidth}, Converter={StaticResource SizeConverter}}" 
                            Height="{Binding Source={StaticResource HoursArrowHeight}, Converter={StaticResource SizeConverter}}" Fill="White" 
                    RadiusX="5" RadiusY="5"
@@ -135,10 +128,29 @@
                     </Rectangle.RenderTransform>
                 </Rectangle>
             </Canvas>
-            <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"
+            <Image Source="{Binding Path= CountryCode, Converter={StaticResource CountryCodeToFilePathConverter}}" 
+               Height="{Binding Source={StaticResource FlagHeight}, Converter={StaticResource SizeConverter}}" HorizontalAlignment="Center" VerticalAlignment="Top"
+               Margin="{Binding Source={StaticResource FlagMargin}, Converter={StaticResource MarginSizeConverter}}"
+               Grid.Row="1"/>
+            <TextBlock Text="{Binding CountryName}"
+                   Grid.Row="1" 
+                   VerticalAlignment="Bottom" HorizontalAlignment="Center" MaxWidth="150" 
+                   TextAlignment="Center"
+                   Margin="{Binding Source={StaticResource CountryNameMargin}, Converter={StaticResource MarginSizeConverter}}" 
+                       Style="{StaticResource TitleTextStyle}"
+                       FontSize="{Binding Source={StaticResource CountryTextSize}, Converter={StaticResource SizeConverter}}"/>
+            <TextBlock x:Name="uiCityName" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"
                    Text="{Binding Path=CityName}"  Style="{StaticResource TitleTextStyle}"  MaxWidth="250" TextAlignment="Center" 
                        FontSize="{Binding Source={StaticResource CityNameSize}, Converter={StaticResource SizeConverter}}"/>
-            <!--<Button Grid.Row="0" Style="{StaticResource MoreAppBarButtonStyle}" HorizontalAlignment="Right" AutomationProperties.Name="" Width="40"/>-->
+            <StackPanel x:Name="uiClockNameEditor" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" MaxWidth="250" Orientation="Horizontal" Visibility="Collapsed">
+                <TextBox Width="150"/>
+                <Button Style="{StaticResource CustomEditButtonStyle}" Content="&#x2714;"/>
+                <Button Style="{StaticResource CustomEditButtonStyle}" Content="&#x2716;"/>
+            </StackPanel>
+            <StackPanel x:Name="uiClockOptions" Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Right"  Height="30" Visibility="Collapsed">
+                <Button Style="{StaticResource CustomEditButtonStyle}" Click="Button_Click_1" />
+                <Button Style="{StaticResource CustomMoreDetailsButtonStyle}" />
+            </StackPanel>
             <StackPanel Grid.ColumnSpan="2"  Grid.Row="2" Margin="0,40,0,10">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
                     <TextBlock Margin="5" Text="{Binding Path=Date, Converter={StaticResource StringFormatter},ConverterParameter='{}{0:dd MMM yyyy}'}"
@@ -151,6 +163,7 @@
                        Style="{StaticResource SubtitleTextStyle}"/>
             </StackPanel>
         </Grid>
+
         <Grid x:Name="snappedClock"
             Visibility="Collapsed" 
               Margin="0,0,0,15"
@@ -160,9 +173,9 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-                <Image Source="{Binding Path= CountryCode, Converter={StaticResource CountryCodeToFilePathConverter}}" 
+            <Image Source="{Binding Path= CountryCode, Converter={StaticResource CountryCodeToFilePathConverter}}" 
                         Height="25" HorizontalAlignment="Left" Margin="10,10,10,0" />
-                <TextBlock Grid.Row="0" Text="{Binding CityName}"
+            <TextBlock Grid.Row="0" Text="{Binding CityName}"
                                TextAlignment="Center" Margin="0,5,0,0"
                                HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource TitleTextStyle}" MaxWidth="130"/>
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -190,9 +203,8 @@
                 </StackPanel>
 
             </StackPanel>
-           
-        </Grid>
 
+        </Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="appViewStates">
                 <VisualState x:Name="FullScreenLandscape"/>

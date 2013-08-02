@@ -49,7 +49,22 @@ namespace UniversalWorldClock.Views
             {
                 await LoadCities();
             }
-            var filterList = new List<Filter> {new Filter("All", 0, true)};
+            var totalCount = _cities.Count(c => c.Name.StartsWith(_queryText, StringComparison.OrdinalIgnoreCase));
+            var filters = (from c in _cities
+                           where c.Name.StartsWith(_queryText, StringComparison.OrdinalIgnoreCase)
+                           group c by c.CountryName
+                           into g
+                           select new {Name = g.Key, Count = g.Count()}).OrderByDescending(g => g.Count).Take(5).Select(
+                               g => new Filter(g.Name, g.Count));
+
+            var filterList = new List<Filter>
+                                 {
+                                     new Filter("All", totalCount, true)
+                                 };
+
+            filterList.AddRange(filters);
+
+
 
             // Communicate results through the view model
             this.DefaultViewModel["QueryText"] = '\u201c' + _queryText + '\u201d';
@@ -73,7 +88,8 @@ namespace UniversalWorldClock.Views
                 selectedFilter.Active = true;
 
                 var resultsData =
-                    _cities.Where(c => c.Name.StartsWith(_queryText.ToString(), StringComparison.OrdinalIgnoreCase))
+                    _cities.Where(c => c.Name.StartsWith(_queryText, StringComparison.OrdinalIgnoreCase) 
+                        && (selectedFilter.Name.Equals("All") || c.CountryName.Equals(selectedFilter.Name)))
                     .Select(r=>new SearchResult
                                    {
                                        Id = r.Id,
