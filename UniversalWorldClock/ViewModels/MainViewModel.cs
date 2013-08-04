@@ -132,8 +132,20 @@ namespace UniversalWorldClock.ViewModels
             Add = new RelayCommand(() => SearchPane.GetForCurrentView().Show());
             var clocks = await _clocksRepository.Get();
             _cities = await _citiesRepository.Get();
+
+            //NOTE: temp fix for time zone Id
+            foreach (var clockInfo in clocks)
+            {
+                var cities = _cities.Where(c => c.Name.Equals(clockInfo.CityName) && c.CountryName.Equals(clockInfo.CountryName) && c.CountryCode.Equals(clockInfo.CountryCode));
+                if (cities.Count() > 1 || !cities.Any())
+                    continue;
+                clockInfo.TimeZoneId = cities.Single().TimeZoneId;
+            }
+            _clocksRepository.Save(clocks);
             Clocks = new ObservableCollection<ClockInfo>(clocks);
-            
+            SearchPaneSetup();
+
+
         }
 
         private void SearchPaneSetup()
