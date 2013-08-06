@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using UniversalWorldClock.Data;
@@ -43,23 +44,23 @@ namespace UniversalWorldClock.Views
         /// session.  This will be null the first time a page is visited.</param>
         protected async override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
-            _queryText= navigationParameter as String;
+            DefaultViewModel["IsInProgress"] = Visibility.Visible;
+            _queryText = navigationParameter as String;
 
             if (!_cities.Any())
             {
                 await LoadCities();
             }
-            var totalCount = _cities.Count(c => c.Name.StartsWith(_queryText, StringComparison.OrdinalIgnoreCase));
-            var filters = (from c in _cities
-                           where c.Name.StartsWith(_queryText, StringComparison.OrdinalIgnoreCase)
+            var filteredCities = _cities.Where(c => c.Name.StartsWith(_queryText, StringComparison.OrdinalIgnoreCase));
+            var filters = (from c in filteredCities
                            group c by c.CountryName
-                           into g
-                           select new {Name = g.Key, Count = g.Count()}).OrderByDescending(g => g.Count).Take(5).Select(
-                               g => new Filter(g.Name, g.Count));
+                               into g
+                               select new { Name = g.Key, Count = g.Count(), Items = g.ToList() }).OrderByDescending(g => g.Count).Take(5).Select(
+                               g => new Filter(g.Name, g.Count) { Cities = g.Items });
 
             var filterList = new List<Filter>
                                  {
-                                     new Filter("All", totalCount, true)
+                                     new Filter("All", filteredCities.Count(), true) {Cities = filteredCities.ToList()}
                                  };
 
             filterList.AddRange(filters);
@@ -70,6 +71,7 @@ namespace UniversalWorldClock.Views
             this.DefaultViewModel["QueryText"] = '\u201c' + _queryText + '\u201d';
             this.DefaultViewModel["Filters"] = filterList;
             this.DefaultViewModel["ShowFilters"] = filterList.Count > 1;
+            DefaultViewModel["IsInProgress"] = Visibility.Collapsed;
         }
 
         /// <summary>
@@ -77,29 +79,29 @@ namespace UniversalWorldClock.Views
         /// </summary>
         /// <param name="sender">The ComboBox instance.</param>
         /// <param name="e">Event data describing how the selected filter was changed.</param>
-        void Filter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        async void Filter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            DefaultViewModel["IsInProgress"] = Visibility.Visible;
             // Determine what filter was selected
             var selectedFilter = e.AddedItems.FirstOrDefault() as Filter;
             if (selectedFilter != null)
             {
-                // Mirror the results into the corresponding Filter object to allow the
-                // RadioButton representation used when not snapped to reflect the change
                 selectedFilter.Active = true;
-
-                var resultsData =
-                    _cities.Where(c => c.Name.StartsWith(_queryText, StringComparison.OrdinalIgnoreCase) 
-                        && (selectedFilter.Name.Equals("All") || c.CountryName.Equals(selectedFilter.Name)))
-                    .Select(r=>new SearchResult
-                                   {
-                                       Id = r.Id,
-                                       Title = r.Name,
-                                       Subtitle = r.State,
-                                       Description = r.CountryName + " " + string.Format("{0}{1:00}:{2:00} UTC", r.CurrentOffset < TimeSpan.Zero ? string.Empty : "+", r.CurrentOffset.Hours, r.CurrentOffset.Minutes),
-                                       Image = new Uri(string.Format("ms-appx:///Assets/CountryFlags/{0}.png", r.CountryCode))
-                                   });
+                Stopwatch sw =new Stopwatch();
+                sw.Start();
+                var resultsData = selectedFilter.Cities
+                    .Select(r => new SearchResult
+                    {
+                        Id = r.Id,
+                        Title = r.Name,
+                        Subtitle = r.State,
+                        Description = r.CountryName + " " + string.Format("{0}{1:00}:{2:00} UTC", r.CurrentOffset < TimeSpan.Zero ? string.Empty : "+", r.CurrentOffset.Hours, r.CurrentOffset.Minutes),
+                        Image = new Uri(string.Format("ms-appx:///Assets/CountryFlags/{0}.png", r.CountryCode))
+                    });
+                sw.Stop();
 
                 DefaultViewModel["Results"] = resultsData.ToList();
+              
                 // Ensure results are found
                 object results;
                 ICollection resultsCollection;
@@ -108,10 +110,12 @@ namespace UniversalWorldClock.Views
                     resultsCollection.Count != 0)
                 {
                     VisualStateManager.GoToState(this, "ResultsFound", true);
+                    DefaultViewModel["IsInProgress"] = Visibility.Collapsed;
                     return;
                 }
+             
             }
-
+            DefaultViewModel["IsInProgress"] = Visibility.Collapsed;
             // Display informational text when there are no search results.
             VisualStateManager.GoToState(this, "NoResultsFound", true);
         }
@@ -172,8 +176,10 @@ namespace UniversalWorldClock.Views
             {
                 get { return String.Format("{0} ({1})", _name, _count); }
             }
+
+            public List<CityInfo> Cities { get; set; }
         }
- 
+
         private void OnResultSelected(object sender, ItemClickEventArgs e)
         {
             var id = (e.ClickedItem as SearchResult).Id;

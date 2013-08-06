@@ -123,7 +123,6 @@ namespace UniversalWorldClock.ViewModels
         #region Private Methods
         private async void Initialize()
         {
-            SearchPaneSetup();
             ClearTimeShift = new RelayCommand(() =>
                                                   {
                                                       GlobalHourTimeShift = 0;

@@ -11,7 +11,7 @@ namespace UniversalWorldClock.Converters
         {
             try
             {
-                return Convert(value);
+                return Convert(value, parameter);
             }
             catch (Exception)
             {
@@ -19,7 +19,7 @@ namespace UniversalWorldClock.Converters
             }
         }
 
-        protected virtual object Convert(object value)
+        protected virtual object Convert(object value, object parameter)
         {
             var size = (double)value;
             return Convert(size);

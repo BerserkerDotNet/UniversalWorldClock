@@ -106,6 +106,7 @@
     <Compile Include="Common\StateAwareUserControl.cs" />
     <Compile Include="Common\UCSettings.cs" />
     <Compile Include="Converters\CountryCodeToFlagFilePathConveretr.cs" />
+    <Compile Include="Converters\ItemsCountToVisibilityConverter.cs" />
     <Compile Include="Converters\MarginObjectSizeConverter.cs" />
     <Compile Include="Converters\ObjectSizeConverter.cs" />
     <Compile Include="Converters\TimeStringConverter.cs" />

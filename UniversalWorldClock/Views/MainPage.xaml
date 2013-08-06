@@ -9,6 +9,7 @@
     <Page.Resources>
         <Runtime:ViewModelStorage x:Key="ViewStorage"/>
         <Converters:ClockInfoToClockViewModelConverter x:Key="ClockInfoToViewModel"/>
+        <Converters:ItemsCountToVisibilityConverter x:Key="ItemsCountToVisibility"/>
     </Page.Resources>
     <Page.DataContext>
         <Binding Path="Main" Source="{StaticResource ResourceKey=ViewStorage}"/>
@@ -28,8 +29,8 @@
                   SelectionMode="None"
                   Margin="0,-238,0,0"
                   Padding="110,240,110,46"
-                  IsDoubleTapEnabled="True"
-                  DoubleTapped="OnDoubleTapClock"
+                  IsDoubleTapEnabled="False"
+                  IsItemClickEnabled="False"
                   x:Name="clockGridView">
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -52,9 +53,9 @@
                   SelectionMode="None"
                   Margin="10,0,0,0"
                   Padding="0,0,0,60"
-                  IsDoubleTapEnabled="True"
+                  IsDoubleTapEnabled="False"
+                      IsItemClickEnabled="False"
                       HorizontalContentAlignment="Stretch"
-                  DoubleTapped="OnDoubleTapClock"
                   x:Name="clockListView">
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -62,6 +63,17 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            <RichTextBlock x:Name="uiEmptyElementsCaption" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"
+                 Visibility="{Binding Clocks.Count, Converter={StaticResource ItemsCountToVisibility}}"
+                           FontSize="24" FontWeight="Light" FontFamily="{StaticResource ContentControlThemeFontFamily}">
+                <Paragraph >
+                    <Bold>You didn't add any clocks so far.</Bold>
+                    <LineBreak/>
+                    <Italic>
+                        <Run>Start typing city name or press "Add" button in app bar to add clocks.</Run>
+                    </Italic>
+                </Paragraph>
+            </RichTextBlock>
         </Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="appViewStates">
@@ -85,6 +97,10 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="uiAppBarShiftView"
                                                        Storyboard.TargetProperty="Width">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="300"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="uiEmptyElementsCaption"
+                                                       Storyboard.TargetProperty="FontSize">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="16"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>

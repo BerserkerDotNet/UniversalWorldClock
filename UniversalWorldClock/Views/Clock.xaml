@@ -27,7 +27,6 @@
                 <x:Double x:Key="EllipseTopOffset">25</x:Double>
                 <x:Double x:Key="EllipseLeftOffset">25</x:Double>
                 <x:Double x:Key="FlagHeight">30</x:Double>
-                <x:Double x:Key="FlagMargin">60</x:Double>
                 <x:Double x:Key="CountryNameMargin">25</x:Double>
                 <x:Double x:Key="CountryTextSize">10</x:Double>
                 <x:Double x:Key="CityNameSize">14</x:Double>
@@ -60,13 +59,13 @@
                 <RowDefinition Height="0.4*"/>
             </Grid.RowDefinitions>
             <Rectangle Fill="Transparent" Grid.RowSpan="3"/><!--Ugly trick to make pointer Enter/Exit working-->
-            <Canvas x:Name="_markersCanvas" Grid.ColumnSpan="2" Grid.Row="1" 
+            <Canvas x:Name="_markersCanvas" Grid.ColumnSpan="2" Grid.Row="1"
                 Width="{Binding Source={StaticResource CanvasWidth}, Converter={StaticResource SizeConverter}}" 
                 Height="{Binding Source={StaticResource CanvasHeight}, Converter={StaticResource SizeConverter}}" 
                 HorizontalAlignment="Center" 
                 VerticalAlignment="Center">
 
-                <Ellipse Grid.Column="0" Grid.Row="1" 
+                <Ellipse x:Name="uiClockEllipse" Grid.Column="0" Grid.Row="1" 
                          Height="{Binding Source={StaticResource EllipseHeight}, Converter={StaticResource SizeConverter}}" 
                          Width="{Binding Source={StaticResource EllipseWidth}, Converter={StaticResource SizeConverter}}" Stroke="Gray" 
                      Canvas.Top="{Binding Source={StaticResource EllipseTopOffset}, Converter={StaticResource SizeConverter}}" 
@@ -82,6 +81,9 @@
                         </LinearGradientBrush >-->
                     </Ellipse.Fill>
                 </Ellipse>
+                <Image x:Name="uiFlagImage" Source="{Binding Path= CountryCode, Converter={StaticResource CountryCodeToFilePathConverter}}" 
+               Height="{Binding Source={StaticResource FlagHeight}, Converter={StaticResource SizeConverter}}" HorizontalAlignment="Center" VerticalAlignment="Top"
+                       ImageOpened="uiFlagImage_ImageOpened_1"/>
                 <Rectangle Grid.Column="0" Grid.Row="1"
                            Width="{Binding Source={StaticResource HoursArrowWidth}, Converter={StaticResource SizeConverter}}" 
                            Height="{Binding Source={StaticResource HoursArrowHeight}, Converter={StaticResource SizeConverter}}" Fill="White" 
@@ -128,10 +130,7 @@
                     </Rectangle.RenderTransform>
                 </Rectangle>
             </Canvas>
-            <Image Source="{Binding Path= CountryCode, Converter={StaticResource CountryCodeToFilePathConverter}}" 
-               Height="{Binding Source={StaticResource FlagHeight}, Converter={StaticResource SizeConverter}}" HorizontalAlignment="Center" VerticalAlignment="Top"
-               Margin="{Binding Source={StaticResource FlagMargin}, Converter={StaticResource MarginSizeConverter}}"
-               Grid.Row="1"/>
+
             <TextBlock Text="{Binding CountryName}"
                    Grid.Row="1" 
                    VerticalAlignment="Bottom" HorizontalAlignment="Center" MaxWidth="150" 
@@ -142,14 +141,14 @@
             <TextBlock x:Name="uiCityName" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"
                    Text="{Binding Path=CityName}"  Style="{StaticResource TitleTextStyle}"  MaxWidth="250" TextAlignment="Center" 
                        FontSize="{Binding Source={StaticResource CityNameSize}, Converter={StaticResource SizeConverter}}"/>
-            <StackPanel x:Name="uiClockNameEditor" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" MaxWidth="250" Orientation="Horizontal" Visibility="Collapsed">
+            <!--<StackPanel x:Name="uiClockNameEditor" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" MaxWidth="250" Orientation="Horizontal" Visibility="Collapsed">
                 <TextBox Width="150"/>
-                <Button Style="{StaticResource CustomEditButtonStyle}" Content="&#x2714;"/>
-                <Button Style="{StaticResource CustomEditButtonStyle}" Content="&#x2716;"/>
-            </StackPanel>
+                <Button Style="{StaticResource CustomDeleteButtonStyle}" Content="&#x2714;"/>
+                <Button Style="{StaticResource CustomDeleteButtonStyle}" Content="&#xE106;"/>
+            </StackPanel>-->
             <StackPanel x:Name="uiClockOptions" Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Right"  Height="30" Visibility="Collapsed">
-                <Button Style="{StaticResource CustomEditButtonStyle}" Click="Button_Click_1" />
-                <Button Style="{StaticResource CustomMoreDetailsButtonStyle}" />
+                <Button Style="{StaticResource CustomDeleteButtonStyle}" Command="{Binding Delete}" />
+                <!--<Button Style="{StaticResource CustomMoreDetailsButtonStyle}" />-->
             </StackPanel>
             <StackPanel Grid.ColumnSpan="2"  Grid.Row="2" Margin="0,40,0,10">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >

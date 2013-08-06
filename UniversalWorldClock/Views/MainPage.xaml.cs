@@ -60,12 +60,5 @@ namespace UniversalWorldClock.Views
             SettingsPane.GetForCurrentView().CommandsRequested -= MainPage_CommandsRequested;
             base.OnNavigatedFrom(e);
         }
-
-        private void OnDoubleTapClock(object sender, DoubleTappedRoutedEventArgs e)
-        {
-            var clock = (e.OriginalSource as FrameworkElement).DataContext as ClockInfo;
-
-            (DataContext as MainViewModel).DeleteClock(clock);
-        }
     }
 }

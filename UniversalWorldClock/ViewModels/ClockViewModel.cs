@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Windows.Input;
 using TimeZones;
 using UniversalWorldClock.Common;
 using UniversalWorldClock.Domain;
@@ -26,6 +27,7 @@ namespace UniversalWorldClock.ViewModels
             _info = info;
             _timeZoneService = TimeZoneService.FindSystemTimeZoneById(_info.TimeZoneId);
             _timer.Tick += OnTimerTick;
+            Delete = new RelayCommand(() => ViewModelStorage.Main.DeleteClock(_info));
         }
 
         void OnTimerTick(object sender, object e)
@@ -72,7 +74,7 @@ namespace UniversalWorldClock.ViewModels
         }
 
         public static TimeSpan TimeOffset { get; set; }
-
+        //NOTE: It should be no UI types here, consider to use a converter
         public Visibility IsTimeModifierVisible
         {
             get
@@ -83,6 +85,10 @@ namespace UniversalWorldClock.ViewModels
                            : Visibility.Visible;
             }
         }
+
+        public ICommand Delete { get; private set; }
+
+
 
     }
 }

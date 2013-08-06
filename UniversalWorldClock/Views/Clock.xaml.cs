@@ -8,6 +8,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
 
 namespace UniversalWorldClock.Views
@@ -102,8 +103,18 @@ namespace UniversalWorldClock.Views
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            uiCityName.Visibility = Visibility.Collapsed;
-            uiClockNameEditor.Visibility = Visibility.Visible;
+           // uiCityName.Visibility = Visibility.Collapsed;
+           // uiClockNameEditor.Visibility = Visibility.Visible;
+        }
+
+        private void uiFlagImage_ImageOpened_1(object sender, RoutedEventArgs e)
+        {
+            var img = (sender as Image);
+            var converter = new ObjectSizeConverter();
+            var canvas = (img.Parent as Canvas);
+            var left = (canvas.ActualWidth/2) - (img.ActualWidth/2);
+            Canvas.SetLeft(img, left);
+            Canvas.SetTop(img, converter.Convert(60));
         }
     }
 }
