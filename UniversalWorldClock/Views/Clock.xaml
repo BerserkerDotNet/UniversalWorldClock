@@ -17,7 +17,6 @@
         <Converters:CountryCodeToFlagFilePathConveretr x:Key="CountryCodeToFilePathConverter"/>
     </UserControl.Resources>
     <Grid>
-        
         <Grid x:Name="normalClock" PointerEntered="normalClock_PointerEntered_1" PointerExited="normalClock_PointerExited_1">
             <Grid.Resources>
                 <x:Double x:Key="CanvasWidth">250</x:Double>
@@ -64,6 +63,11 @@
                 Height="{Binding Source={StaticResource CanvasHeight}, Converter={StaticResource SizeConverter}}" 
                 HorizontalAlignment="Center" 
                 VerticalAlignment="Center">
+                <Canvas.ChildrenTransitions>
+                    <TransitionCollection>
+                        <RepositionThemeTransition/>
+                    </TransitionCollection>
+                </Canvas.ChildrenTransitions>
 
                 <Ellipse x:Name="uiClockEllipse" Grid.Column="0" Grid.Row="1" 
                          Height="{Binding Source={StaticResource EllipseHeight}, Converter={StaticResource SizeConverter}}" 
@@ -162,7 +166,6 @@
                        Style="{StaticResource SubtitleTextStyle}"/>
             </StackPanel>
         </Grid>
-
         <Grid x:Name="snappedClock"
             Visibility="Collapsed" 
               Margin="0,0,0,15"
@@ -194,7 +197,7 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
                     <TextBlock Margin="5" Text="{Binding Path=Date, Converter={StaticResource StringFormatter},ConverterParameter='{}{0:dd MMM yyyy}'}"
                            Style="{StaticResource SubtitleTextStyle}"/>
-                    <TextBlock Text="{Binding Path=GMTOffset, Converter={StaticResource UTCOffsetFormatter}}" 
+                    <TextBlock Text="{Binding Path=UTCOffset, Converter={StaticResource UTCOffsetFormatter}}" 
                        HorizontalAlignment="Center"
                                TextAlignment="Center"
                                VerticalAlignment="Center"

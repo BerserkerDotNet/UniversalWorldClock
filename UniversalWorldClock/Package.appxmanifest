@@ -30,4 +30,7 @@
       </Extensions>
     </Application>
   </Applications>
+  <Capabilities>
+    <DeviceCapability Name="location" />
+  </Capabilities>
 </Package>

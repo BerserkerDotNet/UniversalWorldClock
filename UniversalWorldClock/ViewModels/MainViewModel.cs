@@ -7,6 +7,7 @@ using UniversalWorldClock.Data;
 using UniversalWorldClock.Domain;
 using UniversalWorldClock.Views;
 using Windows.ApplicationModel.Search;
+using Windows.Devices.Geolocation;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -22,7 +23,9 @@ namespace UniversalWorldClock.ViewModels
         private IDataRepository<CityInfo> _citiesRepository;
         private SearchPane _searchPane = SearchPane.GetForCurrentView();
         private IEnumerable<CityInfo> _cities;
-        private TimeSpan _globalTimeShift; 
+        private TimeSpan _globalTimeShift;
+
+
         #endregion
 
         #region Public Methods
@@ -118,6 +121,8 @@ namespace UniversalWorldClock.ViewModels
 
         public TimeSpan TimeShift { get { return _globalTimeShift; } }
 
+
+
         #endregion
 
         #region Private Methods
@@ -142,9 +147,13 @@ namespace UniversalWorldClock.ViewModels
             }
             _clocksRepository.Save(clocks);
             Clocks = new ObservableCollection<ClockInfo>(clocks);
+            Clocks.CollectionChanged += Clocks_CollectionChanged;
             SearchPaneSetup();
+        }
 
-
+        private void Clocks_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            _clocksRepository.Save(Clocks);
         }
 
         private void SearchPaneSetup()

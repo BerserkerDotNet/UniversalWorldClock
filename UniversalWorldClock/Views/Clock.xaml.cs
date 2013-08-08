@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace UniversalWorldClock.Views
 {
-    public sealed partial class Clock
+    public sealed partial class Clock: IClockArrowAnimator
     {
         public Clock()
         {
@@ -101,12 +101,6 @@ namespace UniversalWorldClock.Views
             uiClockOptions.Visibility = Visibility.Collapsed;
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-           // uiCityName.Visibility = Visibility.Collapsed;
-           // uiClockNameEditor.Visibility = Visibility.Visible;
-        }
-
         private void uiFlagImage_ImageOpened_1(object sender, RoutedEventArgs e)
         {
             var img = (sender as Image);
@@ -116,5 +110,20 @@ namespace UniversalWorldClock.Views
             Canvas.SetLeft(img, left);
             Canvas.SetTop(img, converter.Convert(60));
         }
+
+        public void Animate(DateTime old, DateTime current)
+        {
+            var diff = current - old;
+
+            if (diff < TimeSpan.FromMinutes(5))
+                return;
+
+
+        }
+    }
+
+    public interface IClockArrowAnimator
+    {
+        void Animate(DateTime old, DateTime current);
     }
 }

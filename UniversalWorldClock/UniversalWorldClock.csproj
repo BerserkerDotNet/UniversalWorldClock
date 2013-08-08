@@ -109,6 +109,7 @@
     <Compile Include="Converters\ItemsCountToVisibilityConverter.cs" />
     <Compile Include="Converters\MarginObjectSizeConverter.cs" />
     <Compile Include="Converters\ObjectSizeConverter.cs" />
+    <Compile Include="Converters\PositionStatusToVisibilityConverter.cs" />
     <Compile Include="Converters\TimeStringConverter.cs" />
     <Compile Include="Data\ClocksRepository.cs" />
     <Compile Include="Data\IDataRepository.cs" />
@@ -117,6 +118,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Runtime\DependencyResolver.cs" />
+    <Compile Include="ViewModels\CurrentLocationViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Views\CitiesSearchResultsPage.xaml.cs">
       <DependentUpon>CitiesSearchResultsPage.xaml</DependentUpon>
@@ -136,6 +138,9 @@
     <Compile Include="Data\CitiesRepository.cs" />
     <Compile Include="Domain\CityInfo.cs" />
     <Compile Include="Domain\ClockInfo.cs" />
+    <Compile Include="Views\CurrentLocation.xaml.cs">
+      <DependentUpon>CurrentLocation.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -374,6 +379,10 @@
     <Page Include="Common\StandardStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CurrentLocation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>

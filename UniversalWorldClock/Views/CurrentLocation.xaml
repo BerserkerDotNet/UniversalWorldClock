@@ -1,0 +1,42 @@
+﻿<UserControl
+    x:Class="UniversalWorldClock.Views.CurrentLocation"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:UniversalWorldClock.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Runtime="using:UniversalWorldClock.Runtime" xmlns:Converters="using:UniversalWorldClock.Converters"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+    <UserControl.Resources>
+        <Runtime:ViewModelStorage x:Key="ViewStorage"/>
+        <Converters:CountryCodeToFlagFilePathConveretr x:Key="CountryCodeToFilePathConverter"/>
+        <Converters:UTCOffsetConverter x:Key="UTCOffsetFormatter"/>
+        <Converters:TimeStringConverter x:Key="TimeFormatter"/>
+        <Converters:PositionStatusToVisibilityConverter x:Key="PositionStatusToVisibility"/>
+    </UserControl.Resources>
+    <UserControl.DataContext>
+        <Binding Path="CurrentLocation" Source="{StaticResource ResourceKey=ViewStorage}"/>
+    </UserControl.DataContext>
+    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Visibility="{Binding Status, Converter={StaticResource PositionStatusToVisibility}}">
+        <RichTextBlock TextAlignment="Center" Margin="10,10,40,10" FontFamily="Segoe UI" >
+            <Paragraph FontSize="15" >
+                <Run Text="{Binding CurrentCity.Name}"/>
+                <Run Text=","/>
+                <Run Text="{Binding CurrentCity.CountryName}"/>
+                <InlineUIContainer>
+                    <Image Source="{Binding Path= CurrentCity.CountryCode, Converter={StaticResource CountryCodeToFilePathConverter}}" 
+                                        Height="35" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,10,0,0"/>
+                </InlineUIContainer>
+            </Paragraph>
+            <Paragraph FontSize="30">
+                <Run Text="{Binding Path=CurrentTime.Date, Converter={StaticResource TimeFormatter}}"></Run>
+            </Paragraph>
+            <Paragraph FontSize="15">
+                <Run Text="{Binding CurrentCity.TimeZoneId}"/>
+                <Run Text="{Binding Path=CurrentTime.UTCOffset, Converter={StaticResource UTCOffsetFormatter}}"/>
+            </Paragraph>
+        </RichTextBlock>
+    </StackPanel>
+</UserControl>

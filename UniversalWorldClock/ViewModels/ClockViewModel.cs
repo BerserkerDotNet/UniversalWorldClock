@@ -74,7 +74,7 @@ namespace UniversalWorldClock.ViewModels
         }
 
         public static TimeSpan TimeOffset { get; set; }
-        //NOTE: It should be no UI types here, consider to use a converter
+        //NOTE: There should be no UI types here, consider to use a converter
         public Visibility IsTimeModifierVisible
         {
             get
@@ -87,8 +87,6 @@ namespace UniversalWorldClock.ViewModels
         }
 
         public ICommand Delete { get; private set; }
-
-
 
     }
 }
