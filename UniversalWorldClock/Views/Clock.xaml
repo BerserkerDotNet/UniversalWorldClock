@@ -76,13 +76,6 @@
                      Canvas.Left="{Binding Source={StaticResource EllipseLeftOffset}, Converter={StaticResource SizeConverter}}">
                     <Ellipse.Fill>
                         <ImageBrush ImageSource="/Assets/clockBG.jpg" />
-                        <!--<LinearGradientBrush SpreadMethod="Pad" >
-                            <GradientStop Offset="0.0" Color="Black" />
-                            <GradientStop Offset="0.4" Color="#30ffffff" />
-                            <GradientStop Offset="0.5" Color="#60ffffff" />
-                            <GradientStop Offset="0.6" Color="#3fffffff" />
-                            <GradientStop Offset="1.0" Color="black" />
-                        </LinearGradientBrush >-->
                     </Ellipse.Fill>
                 </Ellipse>
                 <Image x:Name="uiFlagImage" Source="{Binding Path= CountryCode, Converter={StaticResource CountryCodeToFilePathConverter}}" 

@@ -45,7 +45,7 @@ namespace UniversalWorldClock.Views
                 }
                 else
                 {
-                    marker.Width = converter.Convert(0.5);
+                    marker.Width = converter.Convert(1);
                     marker.Height = converter.Convert(3);
                     marker.Fill = new SolidColorBrush(Color.FromArgb(0x80, 0xff, 0xff, 0xff));
                     marker.Stroke = null;
@@ -54,7 +54,7 @@ namespace UniversalWorldClock.Views
 
                 TransformGroup transforms = new TransformGroup();
 
-                transforms.Children.Add(new TranslateTransform {X = -(marker.Width/2), Y = marker.Width/2 - converter.Convert(100) - marker.Height});
+                transforms.Children.Add(new TranslateTransform {X = -(marker.Width/2), Y = marker.Width/2 - converter.Convert(93) - marker.Height});
                 transforms.Children.Add(new RotateTransform {Angle = i*6});
                 transforms.Children.Add(new TranslateTransform {X = offset, Y = offset});
 
@@ -80,7 +80,7 @@ namespace UniversalWorldClock.Views
 
                 tb.RenderTransform = new ScaleTransform {ScaleX = 2, ScaleY = 2};
 
-                double r = converter.Convert(92);
+                double r = converter.Convert(85);
                 double angle = Math.PI*i*30.0/180.0;
                 double x = Math.Sin(angle)*r + offset, y = -Math.Cos(angle)*r + offset;
 
