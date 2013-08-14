@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using UniversalWorldClock.Common;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
@@ -37,7 +38,8 @@ namespace UniversalWorldClock.Converters
         }
 
         private double GetMultiplier()
-        {
+        { 
+            //Note: performance issue, try to cache value
             switch (UCSettings.ClockSize.ToLower())
             {
                 case "small":
@@ -49,6 +51,7 @@ namespace UniversalWorldClock.Converters
                 default:
                     return 1.0;
             }
+      
             
         }
     }

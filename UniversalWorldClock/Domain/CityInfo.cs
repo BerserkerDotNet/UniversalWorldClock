@@ -19,6 +19,7 @@ namespace UniversalWorldClock.Domain
         public TimeSpan CurrentOffset {
             get
             {
+                //Note: performance issue
                 var timeZoneService = TimeZoneService.FindSystemTimeZoneById(TimeZoneId);
                 var dateTimeOffset = timeZoneService.ConvertTime(DateTime.Now);
                 return dateTimeOffset.Offset;

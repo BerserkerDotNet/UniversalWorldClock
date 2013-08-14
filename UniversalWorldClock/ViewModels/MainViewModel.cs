@@ -46,7 +46,7 @@ namespace UniversalWorldClock.ViewModels
             if (!Clocks.Contains(info))
                 Clocks.Add(info);
 
-            _clocksRepository.Save(Clocks);
+            //_clocksRepository.Save(Clocks);
         }
 
         public void DeleteClock(ClockInfo clock)
@@ -55,7 +55,7 @@ namespace UniversalWorldClock.ViewModels
                 return;
 
             Clocks.Remove(clock);
-            _clocksRepository.Save(Clocks);
+           // _clocksRepository.Save(Clocks);
         } 
         #endregion
 
@@ -151,9 +151,9 @@ namespace UniversalWorldClock.ViewModels
             SearchPaneSetup();
         }
 
-        private void Clocks_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private async void Clocks_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            _clocksRepository.Save(Clocks);
+            _clocksRepository.Save(Clocks).Wait();
         }
 
         private void SearchPaneSetup()

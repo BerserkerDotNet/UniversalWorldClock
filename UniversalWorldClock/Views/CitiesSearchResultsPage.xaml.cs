@@ -87,8 +87,6 @@ namespace UniversalWorldClock.Views
             if (selectedFilter != null)
             {
                 selectedFilter.Active = true;
-                Stopwatch sw =new Stopwatch();
-                sw.Start();
                 var resultsData = selectedFilter.Cities
                     .Select(r => new SearchResult
                     {
@@ -98,7 +96,6 @@ namespace UniversalWorldClock.Views
                         Description = r.CountryName + " " + string.Format("{0}{1:00}:{2:00} UTC", r.CurrentOffset < TimeSpan.Zero ? string.Empty : "+", r.CurrentOffset.Hours, r.CurrentOffset.Minutes),
                         Image = new Uri(string.Format("ms-appx:///Assets/CountryFlags/{0}.png", r.CountryCode))
                     });
-                sw.Stop();
 
                 DefaultViewModel["Results"] = resultsData.ToList();
               

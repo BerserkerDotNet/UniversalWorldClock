@@ -18,6 +18,7 @@ namespace UniversalWorldClock.ViewModels
 
         static ClockViewModel()
         {
+            //Note: performance issue, experiment with a timer
             _timer.Interval = TimeSpan.FromSeconds(1);
             _timer.Start();
         }

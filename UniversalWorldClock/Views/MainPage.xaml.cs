@@ -1,5 +1,6 @@
 ﻿using UniversalWorldClock.Domain;
 using UniversalWorldClock.ViewModels;
+using UniversalWorldClock.Views.Settings;
 using Windows.UI.ApplicationSettings;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -26,22 +27,32 @@ namespace UniversalWorldClock.Views
         void MainPage_CommandsRequested(SettingsPane sender, SettingsPaneCommandsRequestedEventArgs args)
         {
             args.Request.ApplicationCommands.Add(new SettingsCommand("UC_Setting", " Options", ClockSettings));
+            args.Request.ApplicationCommands.Add(new SettingsCommand("UC_Privacy", " Privacy Policy", PrivacyPolicy));
         }
 
         private void ClockSettings(IUICommand command)
         {
-            const int settingsWidth = 346;
-            var settingsPopup = new Popup();
+            OpenPopup(346, new Options());
+        }
 
-            settingsPopup.IsLightDismissEnabled = true;
-            settingsPopup.Width = settingsWidth;
-            settingsPopup.Height = Window.Current.Bounds.Height;
+        private void PrivacyPolicy(IUICommand command)
+        {
+            OpenPopup(600, new Privacy());
+        }
 
-            var mypane = new Settings.Options();
-            mypane.Width = settingsWidth;
-            mypane.Height = Window.Current.Bounds.Height;
-            settingsPopup.Child = mypane;
-            settingsPopup.SetValue(Canvas.LeftProperty, Window.Current.Bounds.Width - settingsWidth);
+        private void OpenPopup(int width, UserControl child)
+        {
+            var settingsPopup = new Popup
+            {
+                IsLightDismissEnabled = true,
+                Width = width,
+                Height = Window.Current.Bounds.Height
+            };
+
+            child.Width = width;
+            child.Height = Window.Current.Bounds.Height;
+            settingsPopup.Child = child;
+            settingsPopup.SetValue(Canvas.LeftProperty, Window.Current.Bounds.Width - width);
             settingsPopup.SetValue(Canvas.TopProperty, 0);
             settingsPopup.IsOpen = true;
         }
