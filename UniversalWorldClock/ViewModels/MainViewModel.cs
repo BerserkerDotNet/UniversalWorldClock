@@ -5,27 +5,25 @@ using System.Linq;
 using System.Windows.Input;
 using UniversalWorldClock.Data;
 using UniversalWorldClock.Domain;
+using UniversalWorldClock.Runtime;
 using UniversalWorldClock.Views;
 using Windows.ApplicationModel.Search;
 using Windows.Devices.Geolocation;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace UniversalWorldClock.ViewModels
 {
     public sealed class MainViewModel :  ViewModelBase
     {
         #region Fields
-        private ViewModelBase _currentContent;
         private ObservableCollection<ClockInfo> _clocks;
         private IDataRepository<ClockInfo> _clocksRepository;
         private IDataRepository<CityInfo> _citiesRepository;
         private SearchPane _searchPane = SearchPane.GetForCurrentView();
         private IEnumerable<CityInfo> _cities;
-        private TimeSpan _globalTimeShift;
-
-
         #endregion
 
         #region Public Methods
@@ -36,11 +34,6 @@ namespace UniversalWorldClock.ViewModels
             Initialize();
         }
 
-        public void NavigateTo(ViewModelBase viewModel)
-        {
-            CurrentContent = viewModel;
-        }
-
         public void AddClock(ClockInfo info)
         {
             if (!Clocks.Contains(info))
@@ -48,7 +41,6 @@ namespace UniversalWorldClock.ViewModels
 
             //_clocksRepository.Save(Clocks);
         }
-
         public void DeleteClock(ClockInfo clock)
         {
             if (!Clocks.Contains(clock))
@@ -57,24 +49,13 @@ namespace UniversalWorldClock.ViewModels
             Clocks.Remove(clock);
            // _clocksRepository.Save(Clocks);
         } 
+
         #endregion
 
         #region Public Properties
-        public ICommand ClearTimeShift { get; private set; }
-        public ICommand Add { get; private set; }
 
-        public ViewModelBase CurrentContent
-        {
-            get { return _currentContent; }
-            set
-            {
-                if (_currentContent != value)
-                {
-                    _currentContent = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        public ICommand Add { get; private set; }
+        public ICommand SetTime { get; private set; }
 
         public ObservableCollection<ClockInfo> Clocks
         {
@@ -89,50 +70,12 @@ namespace UniversalWorldClock.ViewModels
             }
         }
 
-        public int GlobalHourTimeShift
-        {
-            get { return _globalTimeShift.Hours; }
-            set
-            {
-                var isHoursBecomesNegative = (value < 0 && _globalTimeShift.Minutes > 0);
-                var isHoursBecomesPositiveOrZero = (value >= 0 && _globalTimeShift.Minutes < 0);
-                var minutes = isHoursBecomesNegative || isHoursBecomesPositiveOrZero
-                                  ? -_globalTimeShift.Minutes
-                                  : _globalTimeShift.Minutes;
-
-                _globalTimeShift = new TimeSpan(0, value, minutes, 0);
-                OnPropertyChanged();
-                OnPropertyChanged("TimeShift");
-            }
-        }
-
-        public int GlobalMinuteTimeShift
-        {
-            get { return _globalTimeShift.Minutes; }
-            set
-            {
-                var minutes = _globalTimeShift.Hours < 0 ? -value : value;
-                _globalTimeShift = new TimeSpan(0, _globalTimeShift.Hours, minutes,
-                                                0);
-                OnPropertyChanged();
-                OnPropertyChanged("TimeShift");
-            }
-        }
-
-        public TimeSpan TimeShift { get { return _globalTimeShift; } }
-
-
-
         #endregion
 
         #region Private Methods
         private async void Initialize()
         {
-            ClearTimeShift = new RelayCommand(() =>
-                                                  {
-                                                      GlobalHourTimeShift = 0;
-                                                      GlobalMinuteTimeShift = 0;
-                                                  });
+
             Add = new RelayCommand(() => SearchPane.GetForCurrentView().Show());
             var clocks = await _clocksRepository.Get();
             _cities = await _citiesRepository.Get();
@@ -151,7 +94,7 @@ namespace UniversalWorldClock.ViewModels
             SearchPaneSetup();
         }
 
-        private async void Clocks_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void Clocks_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             _clocksRepository.Save(Clocks).Wait();
         }

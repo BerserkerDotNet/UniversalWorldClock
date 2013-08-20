@@ -7,6 +7,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -26,8 +27,8 @@ namespace UniversalWorldClock.Views
 
         void MainPage_CommandsRequested(SettingsPane sender, SettingsPaneCommandsRequestedEventArgs args)
         {
-            args.Request.ApplicationCommands.Add(new SettingsCommand("UC_Setting", " Options", ClockSettings));
-            args.Request.ApplicationCommands.Add(new SettingsCommand("UC_Privacy", " Privacy Policy", PrivacyPolicy));
+            args.Request.ApplicationCommands.Add(new SettingsCommand("UC_Setting", "Options", ClockSettings));
+            args.Request.ApplicationCommands.Add(new SettingsCommand("UC_Privacy", "Privacy Policy", PrivacyPolicy));
         }
 
         private void ClockSettings(IUICommand command)
@@ -66,5 +67,7 @@ namespace UniversalWorldClock.Views
             SettingsPane.GetForCurrentView().CommandsRequested -= MainPage_CommandsRequested;
             base.OnNavigatedFrom(e);
         }
+
+
     }
 }

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
-  <Identity Name="7228BerserkerDotNet.UniversalWorldClock" Publisher="CN=1264B34E-257D-456F-A56B-3A4B5BF176AD" Version="1.1.1.9" />
+  <Identity Name="7228BerserkerDotNet.UniversalWorldClock" Publisher="CN=1264B34E-257D-456F-A56B-3A4B5BF176AD" Version="1.2.1.10" />
   <Properties>
     <DisplayName>Universal World Clock</DisplayName>
     <PublisherDisplayName>BerserkerDotNet</PublisherDisplayName>

@@ -5,7 +5,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Converters="using:UniversalWorldClock.Converters"
     xmlns:Views="using:UniversalWorldClock.Views" xmlns:Common="using:UniversalWorldClock.Common"
-    xmlns:Runtime="using:UniversalWorldClock.Runtime" mc:Ignorable="d">
+    xmlns:Runtime="using:UniversalWorldClock.Runtime" xmlns:Controls="using:UniversalWorldClock.Controls"
+    mc:Ignorable="d">
     <Page.Resources>
         <Runtime:ViewModelStorage x:Key="ViewStorage"/>
         <Converters:ClockInfoToClockViewModelConverter x:Key="ClockInfoToViewModel"/>
@@ -105,6 +106,10 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="uiCurrentLocation"
                                                        Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames> 
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="uiAddClockColumn"
+                                                       Storyboard.TargetProperty="Width">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="0"/>
                         </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="uiPageTitle"
                                                        Storyboard.TargetProperty="FontSize">
@@ -133,37 +138,18 @@
     </Grid>
     <Page.BottomAppBar>
         <AppBar>
-            <Grid x:Name="uiAppBarShiftView" HorizontalAlignment="Left" Width="490">
+            <Grid x:Name="uiAppBarShiftView" HorizontalAlignment="Left">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="90"/>
-                    <ColumnDefinition Width="90"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="90" x:Name="uiAddClockColumn"/>
                 </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="0.03*"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Text="Global time shift:" Style="{StaticResource TitleTextStyle}"/>
-                <StackPanel Grid.Column="1" Grid.RowSpan="2" Margin="10,0,0,5">
-                    <TextBlock Text="Total shift:" Style="{StaticResource SubtitleTextStyle}" TextAlignment="Center"/>
-                    <TextBlock Text="{Binding TimeShift}" Style="{StaticResource SubtitleTextStyle}" TextAlignment="Center"/>
-                </StackPanel>
-                <StackPanel  Margin="10,0,0,0" Grid.Row="1">
-                    <TextBlock Text="Hours:" Style="{StaticResource SubtitleTextStyle}" />
-                    <Slider x:Name="uiTimeHourShifter" Value="{Binding GlobalHourTimeShift, Mode=TwoWay}" Maximum="24" Minimum="-12" StepFrequency="1"/>
-                    <TextBlock Text="Minutes:" Style="{StaticResource SubtitleTextStyle}"/>
-                    <Slider x:Name="uiTimeMinuteShifter" Value="{Binding GlobalMinuteTimeShift, Mode=TwoWay}" Maximum="59" Minimum="0" StepFrequency="1"/>
-                </StackPanel>
-                <Button Grid.Column="1" Grid.RowSpan="2" 
-                        Style="{StaticResource DiscardAppBarButtonStyle}"
-                        AutomationProperties.Name="Clear Shift"
-                        VerticalAlignment="Bottom"
-                        Command="{Binding ClearTimeShift}"/>
-                <Button Grid.Column="2" Grid.RowSpan="2" 
+                <Controls:TimeMenu Grid.Column="0" MaxWidth="400"/>
+                <Button x:Name="uiAddClock" Grid.Column="2" Grid.RowSpan="2" 
                         Style="{StaticResource AddAppBarButtonStyle}"
                          AutomationProperties.Name="Add Clock"
                         VerticalAlignment="Bottom"
-                        Command="{Binding Add}"/>
+                       Command="{Binding Add}"/>               
+
             </Grid>
         </AppBar>
     </Page.BottomAppBar>

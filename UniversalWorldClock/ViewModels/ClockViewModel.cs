@@ -12,6 +12,7 @@ namespace UniversalWorldClock.ViewModels
     public sealed class ClockViewModel : ViewModelBase
     {
         private readonly ClockInfo _info;
+        private readonly TimeShiftProvider _timeShiftProvider;
         private ITimeZoneEx _timeZoneService;
         private static readonly DispatcherTimer _timer = new DispatcherTimer();
         private DateTime _date;
@@ -23,9 +24,10 @@ namespace UniversalWorldClock.ViewModels
             _timer.Start();
         }
 
-        public ClockViewModel(ClockInfo info)
+        public ClockViewModel(ClockInfo info, TimeShiftProvider timeShiftProvider)
         {
             _info = info;
+            _timeShiftProvider = timeShiftProvider;
             _timeZoneService = TimeZoneService.FindSystemTimeZoneById(_info.TimeZoneId);
             _timer.Tick += OnTimerTick;
             Delete = new RelayCommand(() => ViewModelStorage.Main.DeleteClock(_info));
@@ -34,7 +36,7 @@ namespace UniversalWorldClock.ViewModels
         void OnTimerTick(object sender, object e)
         {
             var dateTimeOffset = _timeZoneService.ConvertTime(DateTime.Now);
-            Date = dateTimeOffset.DateTime + TimeOffset + ViewModelStorage.Main.TimeShift;
+            Date = dateTimeOffset.DateTime  + _timeShiftProvider.TimeShift;
         }
 
         public string CityName
@@ -74,7 +76,6 @@ namespace UniversalWorldClock.ViewModels
             get { return _info.CountryCode; }
         }
 
-        public static TimeSpan TimeOffset { get; set; }
         //NOTE: There should be no UI types here, consider to use a converter
         public Visibility IsTimeModifierVisible
         {

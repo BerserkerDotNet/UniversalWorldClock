@@ -104,8 +104,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Common\StateAwareUserControl.cs" />
+    <Compile Include="Common\TimeShiftProvider.cs" />
     <Compile Include="Common\UCSettings.cs" />
+    <Compile Include="Controls\TimeMenu.xaml.cs">
+      <DependentUpon>TimeMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TimeSetter.xaml.cs">
+      <DependentUpon>TimeSetter.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TimeShifter.xaml.cs">
+      <DependentUpon>TimeShifter.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\CountryCodeToFlagFilePathConveretr.cs" />
+    <Compile Include="Converters\HoursArrayConverter.cs" />
     <Compile Include="Converters\ItemsCountToVisibilityConverter.cs" />
     <Compile Include="Converters\MarginObjectSizeConverter.cs" />
     <Compile Include="Converters\ObjectSizeConverter.cs" />
@@ -120,6 +131,9 @@
     <Compile Include="Runtime\DependencyResolver.cs" />
     <Compile Include="ViewModels\CurrentLocationViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\TimeMenuViewModel.cs" />
+    <Compile Include="ViewModels\TimeSetterViewModel.cs" />
+    <Compile Include="ViewModels\TimeShifterViewModel.cs" />
     <Compile Include="Views\CitiesSearchResultsPage.xaml.cs">
       <DependentUpon>CitiesSearchResultsPage.xaml</DependentUpon>
     </Compile>
@@ -149,7 +163,7 @@
     <Compile Include="Runtime\ViewModelStorage.cs" />
     <Compile Include="ViewModels\ClockViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="ViewModels\RelayCommand.cs" />
+    <Compile Include="Runtime\RelayCommand.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\Settings\Options.xaml.cs">
       <DependentUpon>Options.xaml</DependentUpon>
@@ -371,6 +385,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\TimeMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TimeSetter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TimeShifter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CitiesSearchResultsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

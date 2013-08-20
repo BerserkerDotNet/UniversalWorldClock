@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using UniversalWorldClock.Data;
 using UniversalWorldClock.Domain;
+using UniversalWorldClock.Runtime;
 using Windows.Devices.Geolocation;
 
 namespace UniversalWorldClock.ViewModels
@@ -68,7 +69,7 @@ namespace UniversalWorldClock.ViewModels
                                         CountryName = city.CountryName,
                                         TimeZoneId = city.TimeZoneId
                                     };
-                CurrentTime = new ClockViewModel(clockInfo);
+                CurrentTime = DependencyResolver.Resolve<ClockViewModel>(new Tuple<string, object>("info", clockInfo));
             }
             catch
             {

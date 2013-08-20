@@ -1,5 +1,6 @@
 ﻿using System;
 using UniversalWorldClock.Domain;
+using UniversalWorldClock.Runtime;
 using UniversalWorldClock.ViewModels;
 using Windows.UI.Xaml.Data;
 
@@ -12,7 +13,8 @@ namespace UniversalWorldClock.Converters
             var info = value as ClockInfo;
             if (info == null)
                 throw new ArgumentException("Use this converter on proper type");
-            return new ClockViewModel(info);
+
+            return DependencyResolver.Resolve<ClockViewModel>(new Tuple<string, object>("info", info));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

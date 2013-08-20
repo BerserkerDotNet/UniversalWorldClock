@@ -2,7 +2,7 @@ using System;
 using System.Windows.Input;
 using System.Diagnostics;
 
-namespace UniversalWorldClock.ViewModels
+namespace UniversalWorldClock.Runtime
 {
     public class RelayCommand : ICommand
     {

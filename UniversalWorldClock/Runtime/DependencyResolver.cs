@@ -1,4 +1,7 @@
+using System;
+using System.Linq;
 using Microsoft.Practices.Unity;
+using UniversalWorldClock.Common;
 using UniversalWorldClock.Data;
 using UniversalWorldClock.Domain;
 
@@ -16,11 +19,15 @@ namespace UniversalWorldClock.Runtime
         {
             _container.RegisterType<IDataRepository<CityInfo>, CitiesRepository>();
             _container.RegisterType<IDataRepository<ClockInfo>, ClocksRepository>();
+            _container.RegisterType<TimeShiftProvider>(new ContainerControlledLifetimeManager());
         }
 
-        public static T Resolve<T>()
+        public static T Resolve<T>(params Tuple<string, object>[] arguments)
         {
-            return _container.Resolve<T>();
+            var overrides = arguments.Select(t => new ParameterOverride(t.Item1, t.Item2))
+                .Cast<ResolverOverride>()
+                .ToArray();
+            return _container.Resolve<T>(overrides);
         }
     }
 }
