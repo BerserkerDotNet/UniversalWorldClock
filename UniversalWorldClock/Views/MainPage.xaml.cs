@@ -1,8 +1,11 @@
-﻿using UniversalWorldClock.Domain;
+﻿using System;
+using LeadBolt.Windows8.AppAd;
+using UniversalWorldClock.Domain;
 using UniversalWorldClock.ViewModels;
 using UniversalWorldClock.Views.Settings;
 using Windows.UI.ApplicationSettings;
 using Windows.UI.Popups;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -17,7 +20,7 @@ namespace UniversalWorldClock.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Common.LayoutAwarePage
+    public sealed partial class MainPage : Common.AdAwarePage
     {
         public MainPage()
         {
@@ -36,9 +39,9 @@ namespace UniversalWorldClock.Views
             OpenPopup(346, new Options());
         }
 
-        private void PrivacyPolicy(IUICommand command)
+        private async void PrivacyPolicy(IUICommand command)
         {
-            OpenPopup(600, new Privacy());
+            await Windows.System.Launcher.LaunchUriAsync(new Uri("http://sdrv.ms/1fReV4E"));
         }
 
         private void OpenPopup(int width, UserControl child)
@@ -60,14 +63,26 @@ namespace UniversalWorldClock.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            if (ApplicationView.Value != ApplicationViewState.Snapped)
+            {
+                uiCurrentLocation.Margin = new Thickness(Window.Current.Bounds.Width - 1000, 0, 0, 0);
+            }
             SettingsPane.GetForCurrentView().CommandsRequested += MainPage_CommandsRequested;
+            base.OnNavigatedTo(e);
         }
+
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             SettingsPane.GetForCurrentView().CommandsRequested -= MainPage_CommandsRequested;
             base.OnNavigatedFrom(e);
         }
-
-
+        protected override void OnSizeChanged(ApplicationViewState viewState)
+        {
+            if (viewState != ApplicationViewState.Snapped)
+            {
+                uiCurrentLocation.Margin = new Thickness(Window.Current.Bounds.Width - 1000, 0, 0, 0);
+            }
+            base.OnSizeChanged(viewState);
+        }
     }
 }

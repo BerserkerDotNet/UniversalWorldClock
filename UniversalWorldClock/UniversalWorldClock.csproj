@@ -103,6 +103,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Common\AdAwarePage.cs" />
     <Compile Include="Common\StateAwareUserControl.cs" />
     <Compile Include="Common\TimeShiftProvider.cs" />
     <Compile Include="Common\UCSettings.cs" />
@@ -115,8 +116,10 @@
     <Compile Include="Controls\TimeShifter.xaml.cs">
       <DependentUpon>TimeShifter.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\CountryCodeToFlagFilePathConveretr.cs" />
     <Compile Include="Converters\HoursArrayConverter.cs" />
+    <Compile Include="Converters\InversedBoolToVisibilityConverter.cs" />
     <Compile Include="Converters\ItemsCountToVisibilityConverter.cs" />
     <Compile Include="Converters\MarginObjectSizeConverter.cs" />
     <Compile Include="Converters\ObjectSizeConverter.cs" />
@@ -167,9 +170,6 @@
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\Settings\Options.xaml.cs">
       <DependentUpon>Options.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\Privacy.xaml.cs">
-      <DependentUpon>Privacy.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -421,12 +421,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings\Privacy.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="lb_windows_sdk">
+      <HintPath>..\libs\lb_windows_sdk.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.Unity.NetCore">
       <HintPath>..\packages\Unity.3.0.1304.0\lib\NetCore45\Microsoft.Practices.Unity.NetCore.dll</HintPath>
     </Reference>

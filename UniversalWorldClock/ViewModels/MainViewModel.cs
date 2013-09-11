@@ -47,7 +47,8 @@ namespace UniversalWorldClock.ViewModels
                 return;
 
             Clocks.Remove(clock);
-           // _clocksRepository.Save(Clocks);
+
+            //NOTE: Need a way to cleanup 
         } 
 
         #endregion

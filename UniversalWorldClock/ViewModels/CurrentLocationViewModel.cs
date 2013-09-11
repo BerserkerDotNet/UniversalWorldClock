@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using UniversalWorldClock.Data;
 using UniversalWorldClock.Domain;
 using UniversalWorldClock.Runtime;
@@ -15,6 +16,7 @@ namespace UniversalWorldClock.ViewModels
         private ClockViewModel _currentClockViewModel;
         private readonly Geolocator _geolocator = new Geolocator();
         private PositionStatus _positionStatus;
+        private bool _isLoading;
 
         public CurrentLocationViewModel(IDataRepository<CityInfo> citiesRepository)
         {
@@ -33,13 +35,22 @@ namespace UniversalWorldClock.ViewModels
         }
 
         //NOTE: Smells bad!
-
         public ClockViewModel CurrentTime
         {
             get { return _currentClockViewModel; }
             set
             {
                 _currentClockViewModel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsLoading
+        {
+            get { return _isLoading; }
+            set
+            {
+                _isLoading = value;
                 OnPropertyChanged();
             }
         }
@@ -58,6 +69,7 @@ namespace UniversalWorldClock.ViewModels
         {
             try
             {
+                IsLoading = true;
                 var pos = await _geolocator.GetGeopositionAsync();
                 var cities = await _citiesRepository.Get();
                 var city = cities.FirstOrDefault(c => Math.Abs(c.Latitude - pos.Coordinate.Latitude) < 0.03 && Math.Abs(c.Longitude - pos.Coordinate.Longitude) < 0.03);
@@ -70,13 +82,16 @@ namespace UniversalWorldClock.ViewModels
                                         TimeZoneId = city.TimeZoneId
                                     };
                 CurrentTime = DependencyResolver.Resolve<ClockViewModel>(new Tuple<string, object>("info", clockInfo));
+                Status = _geolocator.LocationStatus;
             }
             catch
             {
-                
+                Status = PositionStatus.NotAvailable;
             }
-
-            Status = _geolocator.LocationStatus;
+            finally
+            {
+                IsLoading = false;
+            }
 
         }
     }

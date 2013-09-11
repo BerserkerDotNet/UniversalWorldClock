@@ -2,6 +2,8 @@
 
 using System;
 using UniversalWorldClock.Converters;
+using UniversalWorldClock.Runtime;
+using UniversalWorldClock.ViewModels;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.ViewManagement;
@@ -13,7 +15,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace UniversalWorldClock.Views
 {
-    public sealed partial class Clock: IClockArrowAnimator
+    public sealed partial class Clock
     {
         public Clock()
         {
@@ -111,19 +113,10 @@ namespace UniversalWorldClock.Views
             Canvas.SetTop(img, converter.Convert(60));
         }
 
-        public void Animate(DateTime old, DateTime current)
+        protected override void OnSizeChanged(ApplicationViewState viewState)
         {
-            var diff = current - old;
-
-            if (diff < TimeSpan.FromMinutes(5))
-                return;
-
-
+            (DataContext as ClockViewModel).ApplyViewState();
         }
-    }
 
-    public interface IClockArrowAnimator
-    {
-        void Animate(DateTime old, DateTime current);
-    }
+   }
 }

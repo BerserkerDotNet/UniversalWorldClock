@@ -256,6 +256,12 @@ namespace UniversalWorldClock.Common
         private void WindowSizeChanged(object sender, WindowSizeChangedEventArgs e)
         {
             this.InvalidateVisualState();
+            OnSizeChanged(ApplicationView.Value);
+        }
+
+        protected virtual void OnSizeChanged(ApplicationViewState viewState)
+        {
+
         }
 
         /// <summary>

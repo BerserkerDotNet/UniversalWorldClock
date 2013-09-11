@@ -1,10 +1,13 @@
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Input;
 using TimeZones;
 using UniversalWorldClock.Common;
 using UniversalWorldClock.Domain;
 using UniversalWorldClock.Runtime;
+using UniversalWorldClock.Views;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
 namespace UniversalWorldClock.ViewModels
@@ -19,9 +22,9 @@ namespace UniversalWorldClock.ViewModels
 
         static ClockViewModel()
         {
-            //Note: performance issue, experiment with a timer
             _timer.Interval = TimeSpan.FromSeconds(1);
             _timer.Start();
+            _timer.Tick += ViewStateTracker;
         }
 
         public ClockViewModel(ClockInfo info, TimeShiftProvider timeShiftProvider)
@@ -30,13 +33,19 @@ namespace UniversalWorldClock.ViewModels
             _timeShiftProvider = timeShiftProvider;
             _timeZoneService = TimeZoneService.FindSystemTimeZoneById(_info.TimeZoneId);
             _timer.Tick += OnTimerTick;
-            Delete = new RelayCommand(() => ViewModelStorage.Main.DeleteClock(_info));
+            Delete = new RelayCommand(() => ViewModelStorage.Main.DeleteClock(_info)); //Clean-up
+            CalculateTime();
         }
 
         void OnTimerTick(object sender, object e)
         {
+            CalculateTime();
+        }
+
+        private void CalculateTime()
+        {
             var dateTimeOffset = _timeZoneService.ConvertTime(DateTime.Now);
-            Date = dateTimeOffset.DateTime  + _timeShiftProvider.TimeShift;
+            Date = dateTimeOffset.DateTime + _timeShiftProvider.TimeShift;
         }
 
         public string CityName
@@ -53,7 +62,7 @@ namespace UniversalWorldClock.ViewModels
             get { return _date; }
             set
             {
-                if (_date != value)
+                if (_date!=value)
                 {
                     _date = value;
                     OnPropertyChanged();
@@ -89,6 +98,35 @@ namespace UniversalWorldClock.ViewModels
         }
 
         public ICommand Delete { get; private set; }
+
+        public void ApplyViewState()
+        {
+            _timer.Interval = CalculateTimerInterval();
+        }
+
+        private static void ViewStateTracker(object sender, object e)
+        {
+            _timer.Interval = CalculateTimerInterval();
+        }
+
+        private static TimeSpan CalculateTimerInterval()
+        {
+            if (ApplicationView.Value != ApplicationViewState.Snapped)
+                return TimeSpan.FromSeconds(1);
+
+            if (ApplicationView.Value == ApplicationViewState.Snapped && DateTime.Now.Second == 0)
+            {
+                return TimeSpan.FromMinutes(1);
+            }
+
+            if (ApplicationView.Value == ApplicationViewState.Snapped && DateTime.Now.Second != 0)
+            {
+                var interval = (60 - DateTime.Now.Second);
+                return TimeSpan.FromSeconds(interval);
+            }
+
+            return TimeSpan.FromSeconds(1);
+        }
 
     }
 }

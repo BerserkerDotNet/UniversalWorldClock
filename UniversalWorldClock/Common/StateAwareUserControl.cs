@@ -21,12 +21,18 @@ namespace UniversalWorldClock.Common
         void Current_SizeChanged(object sender, WindowSizeChangedEventArgs e)
         {
             SetVisualState();
+            OnSizeChanged(ApplicationView.Value);
         }
 
         private void SetVisualState()
         {
             var state = ApplicationView.Value.ToString();
             VisualStateManager.GoToState(this, state, false);
+        }
+
+        protected virtual void OnSizeChanged(ApplicationViewState viewState)
+        {
+            
         }
     }
 }
