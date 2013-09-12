@@ -1,5 +1,7 @@
+using System;
 using LeadBolt.Windows8.AppAd;
 using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -9,6 +11,14 @@ namespace UniversalWorldClock.Common
     {
         private AdController _adController;
         private Grid _adWrapperGrid;
+        private static DispatcherTimer _adTimer = new DispatcherTimer();
+
+
+        static AdAwarePage()
+        {
+            _adTimer.Interval = TimeSpan.FromMinutes(15);
+            _adTimer.Start();
+        }
 
         protected override void OnSizeChanged(ApplicationViewState viewState)
         {
@@ -18,7 +28,7 @@ namespace UniversalWorldClock.Common
         private void LoadAd(ApplicationViewState viewState)
         {
             if (viewState == ApplicationViewState.Snapped)
-                LoadAd("198903296");
+                LoadAd();
             else
                 DestroyAd();
         }
@@ -30,8 +40,15 @@ namespace UniversalWorldClock.Common
             {
                 _adWrapperGrid = adGrid;
                 _adWrapperGrid.Loaded += adGrid_Loaded;
+                _adTimer.Tick += _adTimer_Tick;
             }
             base.OnNavigatedTo(e);
+        }
+
+        void _adTimer_Tick(object sender, object e)
+        {
+            if (ApplicationView.Value == ApplicationViewState.Snapped)
+                LoadAd();
         }
 
         void adGrid_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -39,13 +56,13 @@ namespace UniversalWorldClock.Common
             LoadAd(ApplicationView.Value);
         }
 
-        private void LoadAd(string id)
+        private void LoadAd()
         {
             if (_adWrapperGrid == null)
                 return;
 
             DestroyAd();
-            _adController = new AdController(_adWrapperGrid, id);
+            _adController = new AdController(_adWrapperGrid, "198903296");
             _adController.LoadAd();
         }
 
@@ -53,7 +70,7 @@ namespace UniversalWorldClock.Common
         {
             if (_adWrapperGrid != null)
                 _adWrapperGrid.Loaded -= adGrid_Loaded;
-
+            _adTimer.Tick -= _adTimer_Tick;
             DestroyAd();
             base.OnNavigatedFrom(e);
         }

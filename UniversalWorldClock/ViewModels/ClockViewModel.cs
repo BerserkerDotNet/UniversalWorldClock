@@ -35,6 +35,7 @@ namespace UniversalWorldClock.ViewModels
             _timer.Tick += OnTimerTick;
             Delete = new RelayCommand(() => ViewModelStorage.Main.DeleteClock(_info)); //Clean-up
             CalculateTime();
+            _timeShiftProvider.PropertyChanged += (s, e) => CalculateTime();
         }
 
         void OnTimerTick(object sender, object e)
