@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
 
-namespace UniversalWorldClock.Common
+namespace UniversalWorldClock.Converters
 {
     /// <summary>
     /// Value converter that translates true to false and vice versa.

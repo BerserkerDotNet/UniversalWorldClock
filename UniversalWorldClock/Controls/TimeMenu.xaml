@@ -56,7 +56,6 @@
                         AutomationProperties.Name="Clear Shift"
                         VerticalAlignment="Bottom"
                         Command="{Binding ClearTimeShift}"/>
-
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="appViewStates">
                 <VisualState x:Name="Snapped">

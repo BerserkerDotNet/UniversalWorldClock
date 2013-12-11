@@ -87,7 +87,7 @@ namespace UniversalWorldClock.Views
             if (selectedFilter != null)
             {
                 selectedFilter.Active = true;
-                var resultsData = selectedFilter.Cities
+                var resultsData = selectedFilter.Cities.AsParallel()
                     .Select(r => new SearchResult
                     {
                         Id = r.Id,

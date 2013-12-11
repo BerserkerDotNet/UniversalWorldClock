@@ -13,10 +13,8 @@
     <Page.Resources>
         <CollectionViewSource x:Name="resultsViewSource" Source="{Binding Results}"/>
         <CollectionViewSource x:Name="filtersViewSource" Source="{Binding Filters}"/>
-        <common:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        <!-- TODO: Update the following string to be the name of your app -->
+        <Converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <x:String x:Key="AppName">Universal World Clock</x:String>
-        <Converters:ItemsCountToVisibilityConverter x:Key="ItemsCountToVisibility"/>
     </Page.Resources>
 
     <!--

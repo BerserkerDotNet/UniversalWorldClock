@@ -15,6 +15,7 @@
         <Converters:UTCOffsetConverter x:Key="UTCOffsetFormatter"/>
         <Converters:TimeToAngleConverter x:Key="DateToAngleConverter"/>
         <Converters:CountryCodeToFlagFilePathConveretr x:Key="CountryCodeToFilePathConverter"/>
+        <Converters:BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
     </UserControl.Resources>
     <Grid>
         <Grid x:Name="normalClock" PointerEntered="normalClock_PointerEntered_1" PointerExited="normalClock_PointerExited_1">
@@ -178,7 +179,7 @@
                        Text="{Binding Path=Date, Converter={StaticResource TimeFormatter},ConverterParameter='true'}"
                        FontSize="80" 
                        />
-                <TextBlock TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" Visibility="{Binding IsTimeModifierVisible}"
+                <TextBlock TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" Visibility="{Binding IsTimeModifierVisible, Converter={StaticResource BoolToVisibility}}"
                        Text="{Binding Path=Date, Converter={StaticResource StringFormatter},ConverterParameter='{}{0:tt}'}"
                        FontSize="20" Margin="5,0,0,0"
                        />

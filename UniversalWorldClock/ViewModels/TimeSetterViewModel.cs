@@ -13,67 +13,21 @@ namespace UniversalWorldClock.ViewModels
     public sealed class TimeSetterViewModel : ViewModelBase
     {
         private readonly TimeShiftProvider _timeShiftProvider;
-        private IEnumerable<int> _hours;
-        private IEnumerable<int> _minutes;
-        private int _selectedHours;
-        private int _selectedMinutes;
         private ClockInfo _selectedClock;
-        private string _timeModifier;
-        private IEnumerable<string> _timeModifiers;
         private bool _isShiftUpdateSuppresed = false;
+        private TimeSpan _selectedTime;
 
         public TimeSetterViewModel(TimeShiftProvider timeShiftProvider)
         {
             _timeShiftProvider = timeShiftProvider;
-            Hours = Enumerable.Range(0, 24).ToList();
-            Minutes = Enumerable.Range(0, 60).ToList();
-            _timeModifiers = new[] {"AM", "PM"};
-            TimeModifier = _timeModifiers.First();
             _timeShiftProvider.TimeShiftCleared += _timeShiftProvider_TimeShiftCleared;
         }
 
         void _timeShiftProvider_TimeShiftCleared(object sender, EventArgs e)
         {
             _isShiftUpdateSuppresed = true;
-            SelectedHours = 0;
-            SelectedMinutes = 0;
+            SelectedTime = TimeSpan.Zero;
             _isShiftUpdateSuppresed = false;
-        }
-
-        public IEnumerable<int> Hours
-        {
-            get { return _hours; }
-            private set
-            {
-                _hours = value;
-                OnPropertyChanged();
-            }
-        }    
-        public IEnumerable<int> Minutes
-        {
-            get { return _minutes; }
-            private set
-            {
-                _minutes = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public IEnumerable<string> TimeModifiers
-        {
-            get { return _timeModifiers; }
-        }
-
-        //NOTE: There should be no UI types here, consider to use a converter
-        public Visibility IsTimeModifierVisible
-        {
-            get
-            {
-                return (UCSettings.ClockFormat != null &&
-                        UCSettings.ClockFormat.Equals("24h", StringComparison.OrdinalIgnoreCase))
-                           ? Visibility.Collapsed
-                           : Visibility.Visible;
-            }
         }
 
         public ClockInfo SelectedClock
@@ -87,32 +41,17 @@ namespace UniversalWorldClock.ViewModels
             }
         }
 
-        public int SelectedHours
+        public TimeSpan SelectedTime
         {
-            get { return _selectedHours; }
+            get { return _selectedTime; }
             set
             {
-
-                _selectedHours = value;
-                OnPropertyChanged();
-                UpdateTimeShift();
-            }
-        }
-
-        public int SelectedMinutes
-        {
-            get { return _selectedMinutes; }
-            set { _selectedMinutes = value;
-                OnPropertyChanged();
-                UpdateTimeShift();
-            }
-        }
-
-        public string TimeModifier
-        {
-            get { return _timeModifier; }
-            set { _timeModifier = value; OnPropertyChanged();
-                UpdateTimeShift();
+                if (_selectedTime != value)
+                {
+                    _selectedTime = value;
+                    UpdateTimeShift();
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -129,23 +68,18 @@ namespace UniversalWorldClock.ViewModels
                 return TimeSpan.Zero;
             var service = TimeZoneService.FindSystemTimeZoneById(SelectedClock.TimeZoneId);
             var currentTime = service.ConvertTime(DateTime.Now).TimeOfDay;
-            var timeShift = GetSelectedTime() - currentTime;
+            var timeShift = _selectedTime - currentTime;
 
             return new TimeSpan(timeShift.Hours, timeShift.Minutes, 0);
         }
 
-        private TimeSpan GetSelectedTime()
+        public string ClockIdentifier
         {
-            var hours = SelectedHours;
-            if (IsTimeModifierVisible == Visibility.Visible)
+            get
             {
-                if(TimeModifier == "AM" && SelectedHours==12)
-                    hours = 0;
-                if (TimeModifier == "PM" && SelectedHours!=12)
-                    hours += 12;
+                var is12HourClock =  (UCSettings.ClockFormat == null || !UCSettings.ClockFormat.Equals("24h", StringComparison.OrdinalIgnoreCase));
+                return is12HourClock ? "12hourClock" : "24HourClock";
             }
-
-            return new TimeSpan(hours, SelectedMinutes, 0);
         }
     }
 }

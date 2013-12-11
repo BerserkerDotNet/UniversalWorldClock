@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,41 +13,65 @@ namespace UniversalWorldClock.Common
         private const string CLOCKSIZE = "ClockSize";
         private const string DEFAULT_CLOCK_SIZE = "Small";
         private const string DEFAULT_CLOCK_FORMAT = "12h";
-        public static ApplicationDataContainer SettingsContainer { get; set; }
+        private static ApplicationDataContainer SettingsContainer { get; set; }
+        private static string _currentClockSize;
+        private static string _currentClockFormat;
+
 
         static UCSettings()
         {
             SettingsContainer = ApplicationData.Current.LocalSettings;
+
+            _currentClockSize = GetClockSizeOrDefault();
+            _currentClockFormat = GetClockFormatOrDefault();
+        }
+
+        private static string GetClockFormatOrDefault()
+        {
+            var value = SettingsContainer.Values[CLOCKFORMAT] as string;
+            if (string.IsNullOrEmpty(value))
+            {
+                SettingsContainer.Values[CLOCKFORMAT] = DEFAULT_CLOCK_FORMAT;
+                value = DEFAULT_CLOCK_FORMAT;
+            }
+            return value;
+        }
+
+        private static string GetClockSizeOrDefault()
+        {
+            var value = SettingsContainer.Values[CLOCKSIZE] as string;
+            if (string.IsNullOrEmpty(value))
+            {
+                SettingsContainer.Values[CLOCKSIZE] = DEFAULT_CLOCK_SIZE;
+                value = DEFAULT_CLOCK_SIZE;
+            }
+            return value;
         }
 
         public static string ClockSize
         {
-            get
+            get { return _currentClockSize; }
+            set
             {
-                var value = SettingsContainer.Values[CLOCKSIZE] as string;
-                if (string.IsNullOrEmpty(value))
+                if (!_currentClockSize.Equals(value, StringComparison.OrdinalIgnoreCase))
                 {
-                    SettingsContainer.Values[CLOCKSIZE] = DEFAULT_CLOCK_SIZE;
-                    value = DEFAULT_CLOCK_SIZE;
+                    _currentClockSize = value;
+                    SettingsContainer.Values[CLOCKSIZE] = value;
                 }
-                return value;
             }
-            set { SettingsContainer.Values[CLOCKSIZE] = value; }
         }
         
         public static string ClockFormat
         {
-            get
+            get { return _currentClockFormat; }
+            set
             {
-                var value = SettingsContainer.Values[CLOCKFORMAT] as string;
-                if(string.IsNullOrEmpty(value))
+                if (!_currentClockFormat.Equals(value, StringComparison.OrdinalIgnoreCase))
                 {
-                    SettingsContainer.Values[CLOCKFORMAT] = DEFAULT_CLOCK_FORMAT;
-                    value = DEFAULT_CLOCK_FORMAT;
+                    _currentClockFormat = value;
+                    SettingsContainer.Values[CLOCKFORMAT] = value;
                 }
-                return value;
             }
-            set { SettingsContainer.Values[CLOCKFORMAT] = value; }
         }
 
     }

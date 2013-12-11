@@ -5,6 +5,8 @@ namespace UniversalWorldClock.Domain
 {
     public sealed class CityInfo
     {
+        private TimeSpan? _currentOffset;
+
         public int Id { get; set; }
         public string Name { get; set; }
         public float Latitude { get; set; }
@@ -19,10 +21,13 @@ namespace UniversalWorldClock.Domain
         public TimeSpan CurrentOffset {
             get
             {
-                //Note: performance issue
-                var timeZoneService = TimeZoneService.FindSystemTimeZoneById(TimeZoneId);
-                var dateTimeOffset = timeZoneService.ConvertTime(DateTime.Now);
-                return dateTimeOffset.Offset;
+                if (!_currentOffset.HasValue)
+                {
+                    var timeZoneService = TimeZoneService.FindSystemTimeZoneById(TimeZoneId);
+                    var dateTimeOffset = timeZoneService.ConvertTime(DateTime.Now);
+                    _currentOffset = dateTimeOffset.Offset;
+                }
+                return _currentOffset.Value;
             }
         }
     }

@@ -45,14 +45,19 @@ namespace UniversalWorldClock.ViewModels
 
         private void CalculateTime()
         {
+            var sw=new Stopwatch();
+            sw.Start();
             var dateTimeOffset = _timeZoneService.ConvertTime(DateTime.Now);
             Date = dateTimeOffset.DateTime + _timeShiftProvider.TimeShift;
-        }
+            sw.Stop();
+            Debug.WriteLine("Converted in {0}", sw.Elapsed);
+        } 
 
         public string CityName
         {
             get { return _info.CityName; }
         } 
+
         public string CountryName
         {
             get { return _info.CountryName; }
@@ -76,7 +81,6 @@ namespace UniversalWorldClock.ViewModels
             get
             {
                 var dateTimeOffset = _timeZoneService.ConvertTime(DateTime.Now);
-
                 return dateTimeOffset.Offset;
             }
         }
@@ -86,15 +90,11 @@ namespace UniversalWorldClock.ViewModels
             get { return _info.CountryCode; }
         }
 
-        //NOTE: There should be no UI types here, consider to use a converter
-        public Visibility IsTimeModifierVisible
+        public bool IsTimeModifierVisible
         {
             get
             {
-                return (UCSettings.ClockFormat != null &&
-                        UCSettings.ClockFormat.Equals("24h", StringComparison.OrdinalIgnoreCase))
-                           ? Visibility.Collapsed
-                           : Visibility.Visible;
+                return (UCSettings.ClockFormat == null || !UCSettings.ClockFormat.Equals("24h", StringComparison.OrdinalIgnoreCase));
             }
         }
 

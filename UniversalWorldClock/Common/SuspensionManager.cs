@@ -13,13 +13,6 @@ using Windows.UI.Xaml.Controls;
 
 namespace UniversalWorldClock.Common
 {
-    /// <summary>
-    /// SuspensionManager captures global session state to simplify process lifetime management
-    /// for an application.  Note that session state will be automatically cleared under a variety
-    /// of conditions and should only be used to store information that would be convenient to
-    /// carry across sessions, but that should be discarded when an application crashes or is
-    /// upgraded.
-    /// </summary>
     internal sealed class SuspensionManager
     {
         private static Dictionary<string, object> _sessionState = new Dictionary<string, object>();

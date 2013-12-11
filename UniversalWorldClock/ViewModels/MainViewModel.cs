@@ -10,6 +10,7 @@ using UniversalWorldClock.Views;
 using Windows.ApplicationModel.Search;
 using Windows.Devices.Geolocation;
 using Windows.Storage.Streams;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -38,8 +39,6 @@ namespace UniversalWorldClock.ViewModels
         {
             if (!Clocks.Contains(info))
                 Clocks.Add(info);
-
-            //_clocksRepository.Save(Clocks);
         }
         public void DeleteClock(ClockInfo clock)
         {
@@ -71,6 +70,8 @@ namespace UniversalWorldClock.ViewModels
             }
         }
 
+        public ICommand Donate { get; private set; }
+
         #endregion
 
         #region Private Methods
@@ -78,6 +79,8 @@ namespace UniversalWorldClock.ViewModels
         {
 
             Add = new RelayCommand(() => SearchPane.GetForCurrentView().Show());
+            Donate = new RelayCommand(() => Launcher.LaunchUriAsync(new Uri("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UFS2JX3EJGU3N")));
+
             var clocks = await _clocksRepository.Get();
             _cities = await _citiesRepository.Get();
 

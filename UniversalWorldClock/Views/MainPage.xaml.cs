@@ -3,6 +3,7 @@ using LeadBolt.Windows8.AppAd;
 using UniversalWorldClock.Domain;
 using UniversalWorldClock.ViewModels;
 using UniversalWorldClock.Views.Settings;
+using Windows.System;
 using Windows.UI.ApplicationSettings;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
@@ -20,7 +21,7 @@ namespace UniversalWorldClock.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Common.AdAwarePage
+    public sealed partial class MainPage : Common.LayoutAwarePage
     {
         public MainPage()
         {
@@ -32,6 +33,12 @@ namespace UniversalWorldClock.Views
         {
             args.Request.ApplicationCommands.Add(new SettingsCommand("UC_Setting", "Options", ClockSettings));
             args.Request.ApplicationCommands.Add(new SettingsCommand("UC_Privacy", "Privacy Policy", PrivacyPolicy));
+            args.Request.ApplicationCommands.Add(new SettingsCommand("UC_Donate", "Donate", Donate));
+        }
+
+        private void Donate(IUICommand command)
+        {
+            Launcher.LaunchUriAsync(new Uri("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UFS2JX3EJGU3N"));
         }
 
         private void ClockSettings(IUICommand command)

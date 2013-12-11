@@ -12,6 +12,7 @@
     <UserControl.Resources>
         <Converters:HoursArrayConverter x:Key="HoursConverter"/>
         <Converters:StringConverter x:Key="StringFormatter"/>
+        <Converters:BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
         <Runtime:ViewModelStorage x:Key="ViewStorage"/>
     </UserControl.Resources>
     <Grid >
@@ -32,31 +33,7 @@
         </ComboBox>
         <TextBlock Grid.Row="2" Text="Time:" Style="{StaticResource BasicTextStyle}" Margin="0,5,0,0"/>
         <StackPanel Grid.Row="3" Orientation="Horizontal" MaxWidth="250" Margin="10,5,10,10" HorizontalAlignment="Center">
-            <ComboBox x:Name="uiHourSelector" Margin="0" ItemsSource="{Binding Hours, Converter={StaticResource HoursConverter}}"
-                  SelectedItem="{Binding SelectedHours, Mode=TwoWay}"
-                      Width="65">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Converter={StaticResource StringFormatter},ConverterParameter='{}{0:D2}'}"/>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-            <TextBlock Text=":" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="5,0,5,0" TextAlignment="Center" 
-                   HorizontalAlignment="Center"  />
-            <ComboBox x:Name="uiMinuteSelector"  Margin="0" ItemsSource="{Binding Minutes}"
-                  SelectedItem="{Binding SelectedMinutes, Mode=TwoWay}"
-                      Width="65">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Converter={StaticResource StringFormatter},ConverterParameter='{}{0:D2}'}"/>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-            <ComboBox Margin="20,0,0,0" Visibility="{Binding IsTimeModifierVisible}" 
-                      ItemsSource="{Binding TimeModifiers}"
-                      SelectedItem="{Binding TimeModifier, Mode=TwoWay}"
-                      Width="70">
-            </ComboBox>
+            <TimePicker MinuteIncrement="10" ClockIdentifier="{Binding ClockIdentifier}" Time="{Binding SelectedTime, Mode=TwoWay}"/>
         </StackPanel>
     </Grid>
 </UserControl>

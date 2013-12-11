@@ -39,7 +39,6 @@ namespace UniversalWorldClock.Converters
 
         private double GetMultiplier()
         { 
-            //Note: performance issue, try to cache value
             switch (UCSettings.ClockSize.ToLower())
             {
                 case "small":
