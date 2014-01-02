@@ -34,7 +34,7 @@ namespace UniversalWorldClock.Common
     /// </list>
     /// </summary>
     [Windows.Foundation.Metadata.WebHostHidden]
-    public class LayoutAwarePage : Page
+    public abstract class LayoutAwarePage : Page
     {
         /// <summary>
         /// Identifies the <see cref="DefaultViewModel"/> dependency property.
@@ -48,7 +48,7 @@ namespace UniversalWorldClock.Common
         /// <summary>
         /// Initializes a new instance of the <see cref="LayoutAwarePage"/> class.
         /// </summary>
-        public LayoutAwarePage()
+        protected LayoutAwarePage()
         {
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) return;
 
@@ -248,18 +248,19 @@ namespace UniversalWorldClock.Common
                 this._layoutAwareControls = new List<Control>();
             }
             this._layoutAwareControls.Add(control);
-
+            CurrentViewState = ViewStateHelper.GetViewState(ApplicationView.GetForCurrentView(), new Size(ActualWidth, ActualHeight));
             // Set the initial visual state of the control
-            VisualStateManager.GoToState(control, DetermineVisualState(ApplicationView.Value), false);
+            VisualStateManager.GoToState(control, CurrentViewState.ToString(), false);
         }
 
         private void WindowSizeChanged(object sender, WindowSizeChangedEventArgs e)
         {
+            CurrentViewState = ViewStateHelper.GetViewState(ApplicationView.GetForCurrentView(), e.Size);
             this.InvalidateVisualState();
-            OnSizeChanged(ApplicationView.Value);
+            OnSizeChanged(ApplicationView.GetForCurrentView());
         }
 
-        protected virtual void OnSizeChanged(ApplicationViewState viewState)
+        protected virtual void OnSizeChanged(ApplicationView view)
         {
 
         }
@@ -289,20 +290,6 @@ namespace UniversalWorldClock.Common
         }
 
         /// <summary>
-        /// Translates <see cref="ApplicationViewState"/> values into strings for visual state
-        /// management within the page.  The default implementation uses the names of enum values.
-        /// Subclasses may override this method to control the mapping scheme used.
-        /// </summary>
-        /// <param name="viewState">View state for which a visual state is desired.</param>
-        /// <returns>Visual state name used to drive the
-        /// <see cref="VisualStateManager"/></returns>
-        /// <seealso cref="InvalidateVisualState"/>
-        protected virtual string DetermineVisualState(ApplicationViewState viewState)
-        {
-            return viewState.ToString();
-        }
-
-        /// <summary>
         /// Updates all controls that are listening for visual state changes with the correct
         /// visual state.
         /// </summary>
@@ -315,12 +302,15 @@ namespace UniversalWorldClock.Common
         {
             if (this._layoutAwareControls != null)
             {
-                string visualState = DetermineVisualState(ApplicationView.Value);
                 foreach (var layoutAwareControl in this._layoutAwareControls)
                 {
-                    VisualStateManager.GoToState(layoutAwareControl, visualState, false);
+                    VisualStateManager.GoToState(layoutAwareControl, CurrentViewState.ToString(), false);
                 }
             }
+        }
+
+        public ViewState CurrentViewState {
+            get; private set;
         }
 
         #endregion

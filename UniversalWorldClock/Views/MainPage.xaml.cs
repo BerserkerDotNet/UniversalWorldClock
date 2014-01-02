@@ -1,5 +1,6 @@
 ﻿using System;
 using LeadBolt.Windows8.AppAd;
+using UniversalWorldClock.Common;
 using UniversalWorldClock.Domain;
 using UniversalWorldClock.ViewModels;
 using UniversalWorldClock.Views.Settings;
@@ -83,13 +84,14 @@ namespace UniversalWorldClock.Views
             SettingsPane.GetForCurrentView().CommandsRequested -= MainPage_CommandsRequested;
             base.OnNavigatedFrom(e);
         }
-        protected override void OnSizeChanged(ApplicationViewState viewState)
+
+        protected override void OnSizeChanged(ApplicationView view)
         {
-            if (viewState != ApplicationViewState.Snapped)
+            if (CurrentViewState != ViewState.Snapped)
             {
                 uiCurrentLocation.Margin = new Thickness(Window.Current.Bounds.Width - 1000, 0, 0, 0);
             }
-            base.OnSizeChanged(viewState);
+            base.OnSizeChanged(view);
         }
     }
 }

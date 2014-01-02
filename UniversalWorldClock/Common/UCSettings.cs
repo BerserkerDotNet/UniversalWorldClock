@@ -1,21 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.System.UserProfile;
 
 namespace UniversalWorldClock.Common
 {
     public class UCSettings
     {
+        public const string TWELVE_HOUR_CLOCK = "12h";
+        public const string TWENTY_FOUR_CLOCK = "24h";
+        
         private const string CLOCKFORMAT = "ClockFormat";
         private const string CLOCKSIZE = "ClockSize";
         private const string DEFAULT_CLOCK_SIZE = "Small";
-        private const string DEFAULT_CLOCK_FORMAT = "12h";
         private static ApplicationDataContainer SettingsContainer { get; set; }
         private static string _currentClockSize;
-        private static string _currentClockFormat;
+        private static ClockFormat _currentClockFormat;
 
 
         static UCSettings()
@@ -26,15 +26,18 @@ namespace UniversalWorldClock.Common
             _currentClockFormat = GetClockFormatOrDefault();
         }
 
-        private static string GetClockFormatOrDefault()
+        private static ClockFormat GetClockFormatOrDefault()
         {
-            var value = SettingsContainer.Values[CLOCKFORMAT] as string;
-            if (string.IsNullOrEmpty(value))
+            var rawValue = (string)SettingsContainer.Values[CLOCKFORMAT];
+            if(!string.IsNullOrEmpty(rawValue))
             {
-                SettingsContainer.Values[CLOCKFORMAT] = DEFAULT_CLOCK_FORMAT;
-                value = DEFAULT_CLOCK_FORMAT;
+                return rawValue == TWELVE_HOUR_CLOCK ? ClockFormat.TwelveHourClock : ClockFormat.TwentyFourClock;
             }
-            return value;
+
+            var systemClockFormat = GlobalizationPreferences.Clocks.First();
+            var clockFormat = systemClockFormat == "12HourClock" ? ClockFormat.TwelveHourClock : ClockFormat.TwentyFourClock;
+            SettingsContainer.Values[CLOCKFORMAT] = clockFormat == ClockFormat.TwelveHourClock?TWELVE_HOUR_CLOCK:TWENTY_FOUR_CLOCK;
+            return clockFormat;
         }
 
         private static string GetClockSizeOrDefault()
@@ -61,15 +64,15 @@ namespace UniversalWorldClock.Common
             }
         }
         
-        public static string ClockFormat
+        public static ClockFormat ClockFormat
         {
             get { return _currentClockFormat; }
             set
             {
-                if (!_currentClockFormat.Equals(value, StringComparison.OrdinalIgnoreCase))
+                if (_currentClockFormat!=value)
                 {
                     _currentClockFormat = value;
-                    SettingsContainer.Values[CLOCKFORMAT] = value;
+                    SettingsContainer.Values[CLOCKFORMAT] = value == ClockFormat.TwelveHourClock ? TWELVE_HOUR_CLOCK : TWENTY_FOUR_CLOCK;
                 }
             }
         }

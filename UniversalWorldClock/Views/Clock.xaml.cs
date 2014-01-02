@@ -33,6 +33,7 @@ namespace UniversalWorldClock.Views
         {
             var converter = new ObjectSizeConverter();
             var offset = converter.Convert(125);
+            var offsetY = converter.Convert(107.5);
             for (int i = 0; i < 60; ++i)
             {
                 Rectangle marker = new Rectangle();
@@ -56,8 +57,8 @@ namespace UniversalWorldClock.Views
 
                 TransformGroup transforms = new TransformGroup();
 
-                transforms.Children.Add(new TranslateTransform {X = -(marker.Width/2), Y = marker.Width/2 - converter.Convert(93) - marker.Height});
-                transforms.Children.Add(new RotateTransform {Angle = i*6});
+                transforms.Children.Add(new TranslateTransform { X =-(marker.Width/2), Y =converter.Convert(92)});
+                transforms.Children.Add(new RotateTransform { Angle = i * 6 });
                 transforms.Children.Add(new TranslateTransform {X = offset, Y = offset});
 
                 marker.RenderTransform = transforms;
@@ -113,9 +114,9 @@ namespace UniversalWorldClock.Views
             Canvas.SetTop(img, converter.Convert(60));
         }
 
-        protected override void OnSizeChanged(ApplicationViewState viewState)
+        protected override void OnSizeChanged()
         {
-            (DataContext as ClockViewModel).ApplyViewState();
+            (DataContext as ClockViewModel).ApplyViewState(CurrentViewState);
         }
 
    }

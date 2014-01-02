@@ -10,7 +10,7 @@ namespace UniversalWorldClock.Converters
         {
             
             var clockFormat = UCSettings.ClockFormat;
-            var format = clockFormat != null && clockFormat.Equals("24h",StringComparison.OrdinalIgnoreCase)
+            var format = clockFormat == ClockFormat.TwentyFourClock
                              ? "{0:HH\\:mm}"
                              : (parameter == null) ? "{0:hh\\:mm tt}" : "{0:hh\\:mm}";
 

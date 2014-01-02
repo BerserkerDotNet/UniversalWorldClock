@@ -77,8 +77,8 @@ namespace UniversalWorldClock.ViewModels
         {
             get
             {
-                var is12HourClock =  (UCSettings.ClockFormat == null || !UCSettings.ClockFormat.Equals("24h", StringComparison.OrdinalIgnoreCase));
-                return is12HourClock ? "12hourClock" : "24HourClock";
+                var is12HourClock =  UCSettings.ClockFormat == ClockFormat.TwelveHourClock;
+                return is12HourClock ? "12HourClock" : "24HourClock";
             }
         }
     }

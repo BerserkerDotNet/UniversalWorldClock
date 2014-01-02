@@ -24,7 +24,7 @@ namespace UniversalWorldClock.ViewModels
         private void LoadSettings()
         {
             ClockSize = UCSettings.ClockSize ?? ClockSizeList.First();
-            ClockFormat = UCSettings.ClockFormat ?? ClockFormatList.First();
+            ClockFormat = UCSettings.ClockFormat== Common.ClockFormat.TwelveHourClock ? "12h" : "24h";
         }
 
         public string ClockSize
@@ -56,7 +56,7 @@ namespace UniversalWorldClock.ViewModels
         private void ExecuteSave()
         {
             UCSettings.ClockSize = ClockSize;
-            UCSettings.ClockFormat = ClockFormat;
+            UCSettings.ClockFormat = ClockFormat =="12h"? Common.ClockFormat.TwelveHourClock:Common.ClockFormat.TwentyFourClock;
             var f =(Window.Current.Content as Frame);
             f.Navigate(f.Content.GetType());
             f.GoBack();

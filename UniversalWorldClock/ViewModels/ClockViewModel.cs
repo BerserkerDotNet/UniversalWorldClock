@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Input;
+using Windows.Foundation;
 using TimeZones;
 using UniversalWorldClock.Common;
 using UniversalWorldClock.Domain;
@@ -45,12 +46,8 @@ namespace UniversalWorldClock.ViewModels
 
         private void CalculateTime()
         {
-            var sw=new Stopwatch();
-            sw.Start();
             var dateTimeOffset = _timeZoneService.ConvertTime(DateTime.Now);
             Date = dateTimeOffset.DateTime + _timeShiftProvider.TimeShift;
-            sw.Stop();
-            Debug.WriteLine("Converted in {0}", sw.Elapsed);
         } 
 
         public string CityName
@@ -94,33 +91,35 @@ namespace UniversalWorldClock.ViewModels
         {
             get
             {
-                return (UCSettings.ClockFormat == null || !UCSettings.ClockFormat.Equals("24h", StringComparison.OrdinalIgnoreCase));
+                return UCSettings.ClockFormat == ClockFormat.TwelveHourClock;
             }
         }
 
         public ICommand Delete { get; private set; }
 
-        public void ApplyViewState()
+        public void ApplyViewState(ViewState state)
         {
-            _timer.Interval = CalculateTimerInterval();
+            _timer.Interval = CalculateTimerInterval(state);
         }
 
         private static void ViewStateTracker(object sender, object e)
         {
-            _timer.Interval = CalculateTimerInterval();
+            var bounds = Window.Current.Bounds;
+            var windowSize = new Size(bounds.Width, bounds.Height);
+            _timer.Interval = CalculateTimerInterval(ViewStateHelper.GetViewState(ApplicationView.GetForCurrentView(), windowSize));
         }
 
-        private static TimeSpan CalculateTimerInterval()
+        private static TimeSpan CalculateTimerInterval(ViewState state)
         {
-            if (ApplicationView.Value != ApplicationViewState.Snapped)
+            if (state != ViewState.Snapped)
                 return TimeSpan.FromSeconds(1);
 
-            if (ApplicationView.Value == ApplicationViewState.Snapped && DateTime.Now.Second == 0)
+            if (state == ViewState.Snapped && DateTime.Now.Second == 0)
             {
                 return TimeSpan.FromMinutes(1);
             }
 
-            if (ApplicationView.Value == ApplicationViewState.Snapped && DateTime.Now.Second != 0)
+            if (state == ViewState.Snapped  && DateTime.Now.Second != 0)
             {
                 var interval = (60 - DateTime.Now.Second);
                 return TimeSpan.FromSeconds(interval);

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Windows.UI.Xaml.Data;
 
 namespace UniversalWorldClock.Converters
@@ -13,11 +14,11 @@ namespace UniversalWorldClock.Converters
                 switch(parameter.ToString().ToLower())
                 {
                     case "hours":
-                        return 30 * dt.Hour + dt.Minute / 2 + dt.Second / 120;;
+                        return 30 * dt.Hour + dt.Minute / 2 + dt.Second / 120;
                     case "minutes":
                         return 6 * dt.Minute + dt.Second / 10;
                     case "seconds":
-                        return dt.Second * 6;
+                        return dt.Second *6;
                     default:
                         return 0;
                 }

@@ -1,3 +1,4 @@
+using Windows.Foundation;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -5,7 +6,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace UniversalWorldClock.Common
 {
-    public class StateAwareUserControl : UserControl
+    public abstract class StateAwareUserControl : UserControl
     {
         public StateAwareUserControl()
         {
@@ -13,26 +14,33 @@ namespace UniversalWorldClock.Common
             Loaded += StateAwareUserControl_Loaded;
         }
 
-        void StateAwareUserControl_Loaded(object sender, RoutedEventArgs e)
+        private void StateAwareUserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            SetVisualState();
+            var bounds = Window.Current.Bounds;
+            SetVisualState(new Size(bounds.Width, bounds.Height));
         }
 
-        void Current_SizeChanged(object sender, WindowSizeChangedEventArgs e)
+        private void Current_SizeChanged(object sender, WindowSizeChangedEventArgs e)
         {
-            SetVisualState();
-            OnSizeChanged(ApplicationView.Value);
+            SetVisualState(e.Size);
+            OnSizeChanged();
         }
 
-        private void SetVisualState()
+        private void SetVisualState(Size controlSize)
         {
-            var state = ApplicationView.Value.ToString();
-            VisualStateManager.GoToState(this, state, false);
+            var state = ViewStateHelper.GetViewState(ApplicationView.GetForCurrentView(), controlSize);
+            CurrentViewState = state;
+            VisualStateManager.GoToState(this, state.ToString(), false);
         }
 
-        protected virtual void OnSizeChanged(ApplicationViewState viewState)
+        public ViewState CurrentViewState
         {
-            
+            get;
+            private set;
+        }
+
+        protected virtual void OnSizeChanged()
+        {
         }
     }
 }

@@ -23,7 +23,7 @@ namespace UniversalWorldClock.ViewModels
         private ObservableCollection<ClockInfo> _clocks;
         private IDataRepository<ClockInfo> _clocksRepository;
         private IDataRepository<CityInfo> _citiesRepository;
-        private SearchPane _searchPane = SearchPane.GetForCurrentView();
+        private SearchPane _searchPane;
         private IEnumerable<CityInfo> _cities;
         #endregion
 
@@ -105,7 +105,8 @@ namespace UniversalWorldClock.ViewModels
 
         private void SearchPaneSetup()
         {
-            _searchPane.PlaceholderText = "City name";
+            _searchPane = SearchPane.GetForCurrentView();
+            _searchPane.PlaceholderText = "City name or time zone";
             _searchPane.ShowOnKeyboardInput = true;
             _searchPane.QuerySubmitted += OnSearchPaneQuerySubmitted;
             _searchPane.SuggestionsRequested += OnSearchPaneSuggestionsRequested;
@@ -130,7 +131,9 @@ namespace UniversalWorldClock.ViewModels
         {
             var request = args.Request;
             var matches = _cities.Where(x => x.Name.StartsWith(args.QueryText, StringComparison.OrdinalIgnoreCase)).Take(10);
+            var matchesTimeZones = _cities.GroupBy(x=>x.TimeZoneId).Where(x => x.Key.StartsWith(args.QueryText,StringComparison.OrdinalIgnoreCase)).Take(10);
             request.SearchSuggestionCollection.AppendQuerySuggestions(matches.Select(m => m.Name));
+            request.SearchSuggestionCollection.AppendQuerySuggestions(matchesTimeZones.Select(m => m.Key));
 
             var resultSuggestion = matches.Where(x => x.Name.Equals(args.QueryText, StringComparison.OrdinalIgnoreCase)).Take(5);
             if (!resultSuggestion.Any())

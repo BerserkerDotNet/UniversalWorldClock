@@ -15,22 +15,22 @@
     <Page.DataContext>
         <Binding Path="Main" Source="{StaticResource ResourceKey=ViewStorage}"/>
     </Page.DataContext>
-        <Grid Style="{StaticResource LayoutRootStyle}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid>
-                <Image x:Name="uiLogo"  HorizontalAlignment="Left" Source="/Assets/Logo.png" Height="140" />
-                <StackPanel x:Name="uiHeaderBlock" Orientation="Horizontal" HorizontalAlignment="Left">
-                    <TextBlock x:Name="uiPageTitle" Text="Universal World Clock" Margin="130,0,0,0" 
+    <Grid Style="{StaticResource LayoutRootStyle}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Image x:Name="uiLogo"  HorizontalAlignment="Left" Source="/Assets/Logo.png" Height="140" />
+            <StackPanel x:Name="uiHeaderBlock" Orientation="Horizontal" HorizontalAlignment="Left">
+                <TextBlock x:Name="uiPageTitle" Text="Universal World Clock" Margin="130,0,0,0" 
                        IsHitTestVisible="false" 
                        Style="{StaticResource PageHeaderTextStyle}" VerticalAlignment="Center"  />
-                    <Views:CurrentLocation x:Name="uiCurrentLocation" HorizontalAlignment="Center"/>
-                </StackPanel>
-            </Grid>
-            <Grid Grid.Row="1">
-                <GridView ItemsSource="{Binding Clocks}" 
+                <Views:CurrentLocation x:Name="uiCurrentLocation" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1">
+            <GridView ItemsSource="{Binding Clocks}" 
                   VerticalContentAlignment="Stretch" 
                   SelectionMode="None"
                   Margin="10,-238,-10,0"
@@ -40,22 +40,47 @@
                   CanReorderItems="True"
                   AllowDrop="True"
                   x:Name="clockGridView">
-                    <GridView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" />
-                        </ItemsPanelTemplate>
-                    </GridView.ItemsPanel>
-                    <GridView.ItemTemplate>
-                        <DataTemplate>
-                            <Border BorderThickness="1" BorderBrush="LightGray">
-                                <StackPanel Margin="10" >
-                                    <Views:Clock DataContext="{Binding Converter={StaticResource ClockInfoToViewModel}}"/>
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
-                </GridView>
-                <ListView Visibility="Collapsed"
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center"/>
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
+                <GridView.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderThickness="1" BorderBrush="LightGray">
+                            <StackPanel Margin="10" >
+                                <Views:Clock DataContext="{Binding Converter={StaticResource ClockInfoToViewModel}}"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+            <ListView 
+                   VerticalContentAlignment="Stretch" 
+                  SelectionMode="None"
+                  Margin="10,0,0,10"
+                  IsDoubleTapEnabled="False"
+                      IsItemClickEnabled="False"
+                      HorizontalContentAlignment="Stretch"
+                                        CanReorderItems="True"
+                  AllowDrop="True"
+                ItemsSource="{Binding Clocks}" x:Name="clockNarrowView"  Visibility="Collapsed">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapGrid Orientation="Horizontal" HorizontalAlignment="Center" MaximumRowsOrColumns="3" ItemHeight="230" ItemWidth="353"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderThickness="1" BorderBrush="LightGray">
+                            <StackPanel Margin="10" >
+                                <Views:Clock DataContext="{Binding Converter={StaticResource ClockInfoToViewModel}}"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <ListView Visibility="Collapsed"
                   ItemsSource="{Binding Clocks}" 
                   VerticalContentAlignment="Stretch" 
                   SelectionMode="None"
@@ -67,24 +92,24 @@
                                         CanReorderItems="True"
                   AllowDrop="True"
                   x:Name="clockListView">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Views:Clock DataContext="{Binding Converter={StaticResource ClockInfoToViewModel}}"/>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-                <RichTextBlock x:Name="uiEmptyElementsCaption" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Views:Clock DataContext="{Binding Converter={StaticResource ClockInfoToViewModel}}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <RichTextBlock x:Name="uiEmptyElementsCaption" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"
                  Visibility="{Binding Clocks.Count, Converter={StaticResource ItemsCountToVisibility}}"
                            FontSize="24" FontWeight="Light" FontFamily="{StaticResource ContentControlThemeFontFamily}">
-                    <Paragraph >
-                        <Bold>You didn't add any clocks so far.</Bold>
-                        <LineBreak/>
-                        <Italic>
-                            <Run x:Name="uiAddClockInstruction">Start typing city name or press "Add" button in app bar to add clocks.</Run>
-                        </Italic>
-                    </Paragraph>
-                </RichTextBlock>
-            </Grid>
+                <Paragraph >
+                    <Bold>You didn't add any clocks so far.</Bold>
+                    <LineBreak/>
+                    <Italic>
+                        <Run x:Name="uiAddClockInstruction">Start typing city name or press "Add" button in app bar to add clocks.</Run>
+                    </Italic>
+                </Paragraph>
+            </RichTextBlock>
+        </Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="appViewStates">
                 <VisualState x:Name="FullScreenLandscape"/>
@@ -93,6 +118,10 @@
                 <VisualState x:Name="Snapped">
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="clockGridView"
+                                                       Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="clockNarrowView"
                                                        Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
@@ -140,9 +169,57 @@
                                                        Storyboard.TargetProperty="FontSize">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="16"/>
                         </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="uiAddClockInstruction"
-                                                       Storyboard.TargetProperty="Text">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Please switch to full view to add clocks."/>
+
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="Narrow">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="clockGridView"
+                                                       Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="clockListView"
+                                                       Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames> 
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="clockNarrowView"
+                                                       Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+
+
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="uiLogo"
+                                                       Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="uiPageTitle"
+                                                       Storyboard.TargetProperty="FontSize">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="22"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="uiHeaderBlock"
+                                                       Storyboard.TargetProperty="HorizontalAlignment">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Center"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="uiHeaderBlock"
+                                                       Storyboard.TargetProperty="Orientation">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Vertical"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="uiPageTitle"
+                                                       Storyboard.TargetProperty="Margin">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="20,0,20,0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="uiPageTitle"
+                                                       Storyboard.TargetProperty="FontWeight">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Bold"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="uiCurrentLocation"
+                                                       Storyboard.TargetProperty="Margin">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="0,0,10,10"/>
+                        </ObjectAnimationUsingKeyFrames>
+
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="uiEmptyElementsCaption"
+                                                       Storyboard.TargetProperty="FontSize">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="16"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>

@@ -51,19 +51,31 @@ namespace UniversalWorldClock.Views
             {
                 await LoadCities();
             }
-            var filteredCities = _cities.Where(c => c.Name.StartsWith(_queryText, StringComparison.OrdinalIgnoreCase));
+            var filteredCities = _cities.Where(c => c.Name.StartsWith(_queryText, StringComparison.OrdinalIgnoreCase)
+                );
+
+            var filteredCitiesByTimezone = _cities.Where(c => c.TimeZoneId.StartsWith(_queryText, StringComparison.OrdinalIgnoreCase));
             var filters = (from c in filteredCities
                            group c by c.CountryName
                                into g
                                select new { Name = g.Key, Count = g.Count(), Items = g.ToList() }).OrderByDescending(g => g.Count).Take(5).Select(
                                g => new Filter(g.Name, g.Count) { Cities = g.Items });
 
+            var filtersByTimezone = (from c in filteredCitiesByTimezone
+                                     group c by c.TimeZoneId
+                                         into g
+                                         select new { Name = g.Key, Count = g.Count(), Items = g.ToList() }).OrderByDescending(g => g.Count).Take(5).Select(
+                               g => new Filter(g.Name, g.Count) { Cities = g.Items });
+
+            var allFiltered = filteredCities.Union(filteredCitiesByTimezone).ToList();
+
             var filterList = new List<Filter>
                                  {
-                                     new Filter("All", filteredCities.Count(), true) {Cities = filteredCities.ToList()}
+                                     new Filter("All", allFiltered.Count(), true) {Cities = allFiltered.ToList()}
                                  };
 
             filterList.AddRange(filters);
+            filterList.AddRange(filtersByTimezone);
 
 
 

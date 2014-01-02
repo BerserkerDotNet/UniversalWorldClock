@@ -7,7 +7,6 @@ namespace UniversalWorldClock.Common
     {
         private TimeSpan _timeShift;
 
-
         public void Clear()
         {
             OnTimeShiftCleared(EventArgs.Empty);

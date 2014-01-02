@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
-  <Identity Name="7228BerserkerDotNet.UniversalWorldClock" Publisher="CN=1264B34E-257D-456F-A56B-3A4B5BF176AD" Version="1.3.3.13" />
+  <Identity Name="7228BerserkerDotNet.UniversalWorldClock" Publisher="CN=1264B34E-257D-456F-A56B-3A4B5BF176AD" Version="1.4.0.14" />
   <Properties>
     <DisplayName>Universal World Clock</DisplayName>
     <PublisherDisplayName>BerserkerDotNet</PublisherDisplayName>
@@ -31,6 +31,7 @@
           <m2:Rotation Preference="landscapeFlipped" />
         </m2:InitialRotationPreference>
         <m2:SplashScreen Image="Assets\SplashScreen.png" />
+        <m2:ApplicationView MinWidth="width320" />
       </m2:VisualElements>
     </Application>
   </Applications>
