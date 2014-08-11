@@ -10,7 +10,7 @@ namespace UniversalWorldClock.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var info = value as ClockInfo;
+            var info = value as CityInfo;
             if (info == null)
                 throw new ArgumentException("Use this converter on proper type");
 

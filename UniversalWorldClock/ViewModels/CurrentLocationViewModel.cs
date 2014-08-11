@@ -71,17 +71,9 @@ namespace UniversalWorldClock.ViewModels
             {
                 IsLoading = true;
                 var pos = await _geolocator.GetGeopositionAsync();
-                var cities = await _citiesRepository.Get();
-                var city = cities.FirstOrDefault(c => Math.Abs(c.Latitude - pos.Coordinate.Latitude) < 0.03 && Math.Abs(c.Longitude - pos.Coordinate.Longitude) < 0.03);
+                var city = _citiesRepository.Get(c => Math.Abs(c.Latitude - pos.Coordinate.Latitude) < 0.03 && Math.Abs(c.Longitude - pos.Coordinate.Longitude) < 0.03).FirstOrDefault();
                 CurrentCity = city;
-                var clockInfo = new ClockInfo
-                                    {
-                                        CityName = city.Name,
-                                        CountryCode = city.CountryCode,
-                                        CountryName = city.CountryName,
-                                        TimeZoneId = city.TimeZoneId
-                                    };
-                CurrentTime = DependencyResolver.Resolve<ClockViewModel>(new Tuple<string, object>("info", clockInfo));
+                CurrentTime = DependencyResolver.Resolve<ClockViewModel>(new Tuple<string, object>("info", city));
                 Status = _geolocator.LocationStatus;
             }
             catch

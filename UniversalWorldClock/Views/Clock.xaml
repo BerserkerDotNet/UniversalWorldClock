@@ -16,9 +16,58 @@
         <Converters:TimeToAngleConverter x:Key="DateToAngleConverter"/>
         <Converters:CountryCodeToFlagFilePathConveretr x:Key="CountryCodeToFilePathConverter"/>
         <Converters:BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+        <Converters:DateToShortStringConverter x:Key="DateToShortString"/>
+        <Flyout x:Key="DetailsFlyout">
+            <Flyout.FlyoutPresenterStyle>
+                <Style TargetType="FlyoutPresenter">
+                    <Setter Property="Background" Value="{StaticResource ApplicationPageBackgroundThemeBrush}"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                    <Setter Property="BorderBrush" Value="LightGray"/>
+                </Style>
+            </Flyout.FlyoutPresenterStyle>
+            <StackPanel Width="250" >
+                <TextBlock Style="{StaticResource BasicTextStyle}" FontWeight="Bold">Location:</TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="../Assets/globe.png" Margin="0,5,5,0"/>
+                    <TextBlock Style="{StaticResource BasicTextStyle}" Text="{Binding Coordinates}"/>
+                </StackPanel>
+                <TextBlock Style="{StaticResource BasicTextStyle}" FontWeight="Bold" Text="Time zone:"/>
+                <TextBlock Style="{StaticResource BasicTextStyle}" Text="{Binding TimeZoneId}" ToolTipService.ToolTip="Microsoft Time Zone"/>
+                <TextBlock Style="{StaticResource BasicTextStyle}" Text="{Binding TimeZone}" ToolTipService.ToolTip="IANA Time Zone"/>
+                <TextBlock Style="{StaticResource BasicTextStyle}" FontWeight="Bold" Text="Sun information:"/>
+                <GridView ItemsSource="{Binding SunInfo}" 
+                                  VerticalContentAlignment="Stretch" 
+                                  SelectionMode="None"
+                                  IsDoubleTapEnabled="False"
+                                  IsItemClickEnabled="False">
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center"/>
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                    <GridView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,0,10,0">
+                                <TextBlock Style="{StaticResource BasicTextStyle}" HorizontalAlignment="Center" 
+                                                       TextAlignment="Center"
+                                                       Text="{Binding SunRise, Converter={StaticResource DateToShortString}}"/>
+                                <StackPanel Orientation="Horizontal" ToolTipService.ToolTip="Sunrise">
+                                    <Image Source="../Assets/Sunrise.png"  />
+                                    <TextBlock Style="{StaticResource BasicTextStyle}" Text="{Binding SunRise, Converter={StaticResource TimeFormatter}}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" ToolTipService.ToolTip="Sunset">
+                                    <Image Source="../Assets/Sunset.png" />
+                                    <TextBlock Style="{StaticResource BasicTextStyle}" Text="{Binding SunSet, Converter={StaticResource TimeFormatter}}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+            </StackPanel>
+        </Flyout>
     </UserControl.Resources>
     <Grid>
-        <Grid x:Name="normalClock" PointerEntered="normalClock_PointerEntered_1" PointerExited="normalClock_PointerExited_1">
+        <Grid x:Name="normalClock" PointerEntered="Clock_PointerEntered" PointerExited="Clock_PointerExited">
             <Grid.Resources>
                 <x:Double x:Key="CanvasWidth">250</x:Double>
                 <x:Double x:Key="CanvasHeight">215</x:Double>
@@ -78,8 +127,8 @@
                     </Ellipse.Fill>
                 </Ellipse>
                 <Image x:Name="uiFlagImage" Source="{Binding Path= CountryCode, Converter={StaticResource CountryCodeToFilePathConverter}}" 
-               Height="{Binding Source={StaticResource FlagHeight}, Converter={StaticResource SizeConverter}}" HorizontalAlignment="Center" VerticalAlignment="Top"
-                       ImageOpened="uiFlagImage_ImageOpened_1"/>
+                       Height="{Binding Source={StaticResource FlagHeight}, Converter={StaticResource SizeConverter}}" HorizontalAlignment="Center" VerticalAlignment="Top"
+                               ImageOpened="uiFlagImage_ImageOpened"/>
                 <Rectangle
                     Width="{Binding Source={StaticResource HoursArrowWidth}, Converter={StaticResource SizeConverter}}" 
                            Height="{Binding Source={StaticResource HoursArrowHeight}, Converter={StaticResource SizeConverter}}" Fill="White" 
@@ -136,9 +185,9 @@
             <TextBlock x:Name="uiCityName" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"
                    Text="{Binding Path=CityName}"  Style="{StaticResource TitleTextStyle}"  MaxWidth="250" TextAlignment="Center" 
                        FontSize="{Binding Source={StaticResource CityNameSize}, Converter={StaticResource SizeConverter}}"/>
-            <StackPanel x:Name="uiClockOptions" Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Right"  Height="30" Visibility="Collapsed">
+            <StackPanel Grid.Row="0" x:Name="uiClockOptions" Orientation="Horizontal"  HorizontalAlignment="Right"  Height="30" Visibility="Collapsed">
+                <Button Style="{StaticResource CustomMoreDetailsButtonStyle}" Flyout="{StaticResource DetailsFlyout}"/>
                 <Button Style="{StaticResource CustomDeleteButtonStyle}" Command="{Binding Delete}" />
-                <!--<Button Style="{StaticResource CustomMoreDetailsButtonStyle}" />-->
             </StackPanel>
             <StackPanel Grid.ColumnSpan="2"  Grid.Row="2" Margin="0,40,0,10">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
@@ -152,7 +201,7 @@
                        Style="{StaticResource SubtitleTextStyle}"/>
             </StackPanel>
         </Grid>
-        <Grid x:Name="snappedClock"
+        <Grid x:Name="snappedClock" PointerEntered="SnappedClock_PointerEntered" PointerExited="SnappedClock_PointerExited"
             Visibility="Collapsed" 
               Margin="0,0,0,15"
               Width="280">
@@ -161,8 +210,13 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
+            <Rectangle Fill="Transparent" Grid.RowSpan="3"/> <!--Ugly trick to make pointer Enter/Exit work-->
             <Image Source="{Binding Path= CountryCode, Converter={StaticResource CountryCodeToFilePathConverter}}" 
-                        Height="25" HorizontalAlignment="Left" Margin="10,10,10,0" />
+                        Height="25" HorizontalAlignment="Left" Margin="10,10,10,0"/>
+            <StackPanel Grid.Row="0" x:Name="snappedClockOptions" Orientation="Horizontal"  HorizontalAlignment="Right"  Height="30" Visibility="Collapsed">
+                <Button Style="{StaticResource CustomMoreDetailsButtonStyle}" Flyout="{StaticResource DetailsFlyout}"/>
+                <Button Style="{StaticResource CustomDeleteButtonStyle}" Command="{Binding Delete}" />
+            </StackPanel>
             <TextBlock Grid.Row="0" Text="{Binding CityName}"
                                TextAlignment="Center" Margin="0,5,0,0"
                                HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource TitleTextStyle}" MaxWidth="130"/>

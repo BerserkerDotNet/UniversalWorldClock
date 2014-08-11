@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Linq;
+using Windows.ApplicationModel.Background;
+using UniversalWorldClock.Runtime;
 using UniversalWorldClock.Views;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using SplashScreen = UniversalWorldClock.Views.SplashScreen;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
@@ -14,6 +18,8 @@ namespace UniversalWorldClock
     /// </summary>
     sealed partial class App : Application
     {
+
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -40,10 +46,10 @@ namespace UniversalWorldClock
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
-
+        
                 if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
-                    //TODO: Load state from previously suspended application
+                    
                 }
 
                 // Place the frame in the current Window
@@ -55,7 +61,7 @@ namespace UniversalWorldClock
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                if (!rootFrame.Navigate(typeof(MainPage), args.Arguments))
+                if (!rootFrame.Navigate(typeof(SplashScreen), args.Arguments))
                 {
                     throw new Exception("Failed to create initial page");
                 }

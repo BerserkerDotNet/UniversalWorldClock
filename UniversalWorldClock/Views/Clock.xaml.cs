@@ -1,6 +1,7 @@
 ﻿// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
 using System;
+using Windows.UI.Xaml.Input;
 using UniversalWorldClock.Converters;
 using UniversalWorldClock.Runtime;
 using UniversalWorldClock.ViewModels;
@@ -33,7 +34,6 @@ namespace UniversalWorldClock.Views
         {
             var converter = new ObjectSizeConverter();
             var offset = converter.Convert(125);
-            var offsetY = converter.Convert(107.5);
             for (int i = 0; i < 60; ++i)
             {
                 Rectangle marker = new Rectangle();
@@ -94,17 +94,17 @@ namespace UniversalWorldClock.Views
             }
         }
 
-        private void normalClock_PointerEntered_1(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Clock_PointerEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
             uiClockOptions.Visibility = Visibility.Visible;
         }
 
-        private void normalClock_PointerExited_1(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Clock_PointerExited(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
             uiClockOptions.Visibility = Visibility.Collapsed;
         }
 
-        private void uiFlagImage_ImageOpened_1(object sender, RoutedEventArgs e)
+        private void uiFlagImage_ImageOpened(object sender, RoutedEventArgs e)
         {
             var img = (sender as Image);
             var converter = new ObjectSizeConverter();
@@ -119,5 +119,14 @@ namespace UniversalWorldClock.Views
             (DataContext as ClockViewModel).ApplyViewState(CurrentViewState);
         }
 
-   }
+        private void SnappedClock_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            snappedClockOptions.Visibility = Visibility.Visible;
+        }
+
+        private void SnappedClock_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            snappedClockOptions.Visibility = Visibility.Collapsed;
+        }
+    }
 }

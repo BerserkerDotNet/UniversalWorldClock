@@ -415,7 +415,7 @@
         <Setter Property="Padding" Value="2"/>
     </Style>
     <Style x:Key="CustomMoreDetailsButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource BaseCustomButtonStyle}">
-        <Setter Property="Content" Value="&#xE10C;"/>
+        <Setter Property="Content" Value="&#xE2C0;"/>
         <Setter Property="ToolTipService.ToolTip" Value="Details"/>
     </Style>  
     <Style x:Key="CustomDeleteButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource BaseCustomButtonStyle}">

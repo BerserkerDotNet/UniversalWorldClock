@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
-  <Identity Name="7228BerserkerDotNet.UniversalWorldClock" Publisher="CN=1264B34E-257D-456F-A56B-3A4B5BF176AD" Version="1.4.0.14" />
+  <Identity Name="7228BerserkerDotNet.UniversalWorldClock" Publisher="CN=1264B34E-257D-456F-A56B-3A4B5BF176AD" Version="1.5.0.20" />
   <Properties>
     <DisplayName>Universal World Clock</DisplayName>
     <PublisherDisplayName>BerserkerDotNet</PublisherDisplayName>
@@ -17,9 +17,16 @@
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="UniversalWorldClock.App">
       <Extensions>
         <Extension Category="windows.search" />
+        <Extension Category="windows.backgroundTasks" EntryPoint="UniversalWorldClock.Tasks.TileSchedulerTask">
+          <BackgroundTasks>
+            <Task Type="systemEvent" />
+            <Task Type="timer" />
+          </BackgroundTasks>
+        </Extension>
       </Extensions>
-      <m2:VisualElements DisplayName="Universal World Clock" Description="Universal World Clock" BackgroundColor="#464646" ForegroundText="light" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png">
-        <m2:DefaultTile Wide310x150Logo="Assets\WideLogo.png">
+      <m2:VisualElements DisplayName="Universal World Clock" Description="Universal World Clock" BackgroundColor="#464646" ForegroundText="light" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" ToastCapable="false">
+        <m2:LockScreen Notification="badge" BadgeLogo="Assets\BadgeLogo.png" />
+        <m2:DefaultTile Wide310x150Logo="Assets\WideLogo.png" Square310x310Logo="Assets\Square310x310Logo.png">
           <m2:ShowNameOnTiles>
             <m2:ShowOn Tile="square150x150Logo" />
           </m2:ShowNameOnTiles>

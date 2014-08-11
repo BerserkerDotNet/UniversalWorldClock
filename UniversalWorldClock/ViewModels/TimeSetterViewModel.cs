@@ -13,7 +13,7 @@ namespace UniversalWorldClock.ViewModels
     public sealed class TimeSetterViewModel : ViewModelBase
     {
         private readonly TimeShiftProvider _timeShiftProvider;
-        private ClockInfo _selectedClock;
+        private CityInfo _selectedClock;
         private bool _isShiftUpdateSuppresed = false;
         private TimeSpan _selectedTime;
 
@@ -30,7 +30,7 @@ namespace UniversalWorldClock.ViewModels
             _isShiftUpdateSuppresed = false;
         }
 
-        public ClockInfo SelectedClock
+        public CityInfo SelectedClock
         {
             get { return _selectedClock; }
             set

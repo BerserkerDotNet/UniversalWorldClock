@@ -19,6 +19,7 @@
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
     <TargetFrameworkVersion />
     <AppxBundlePlatforms>neutral</AppxBundlePlatforms>
+    <AppxBundle>Always</AppxBundle>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -108,7 +109,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Common\ClockFormat.cs" />
+    <Compile Include="Common\GeoHelper.cs" />
     <Compile Include="Common\StateAwareUserControl.cs" />
+    <Compile Include="Domain\SunInfo.cs" />
     <Compile Include="Common\TimeShiftProvider.cs" />
     <Compile Include="Common\UCSettings.cs" />
     <Compile Include="Common\ViewState.cs" />
@@ -124,6 +127,7 @@
     </Compile>
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\CountryCodeToFlagFilePathConveretr.cs" />
+    <Compile Include="Converters\DateToShortStringConverter.cs" />
     <Compile Include="Converters\HoursArrayConverter.cs" />
     <Compile Include="Converters\InversedBoolToVisibilityConverter.cs" />
     <Compile Include="Converters\ItemsCountToVisibilityConverter.cs" />
@@ -131,7 +135,6 @@
     <Compile Include="Converters\ObjectSizeConverter.cs" />
     <Compile Include="Converters\PositionStatusToVisibilityConverter.cs" />
     <Compile Include="Converters\TimeStringConverter.cs" />
-    <Compile Include="Data\ClocksRepository.cs" />
     <Compile Include="Data\IDataRepository.cs" />
     <Compile Include="Domain\SearchResult.cs" />
     <Compile Include="App.xaml.cs">
@@ -158,9 +161,8 @@
     <Compile Include="Common\SuspensionManager.cs" />
     <Compile Include="Converters\TimeToAngleConverter.cs" />
     <Compile Include="Converters\UTCOffsetConverter.cs" />
-    <Compile Include="Data\CitiesRepository.cs" />
+    <Compile Include="Data\DataRepository.cs" />
     <Compile Include="Domain\CityInfo.cs" />
-    <Compile Include="Domain\ClockInfo.cs" />
     <Compile Include="Views\CurrentLocation.xaml.cs">
       <DependentUpon>CurrentLocation.xaml</DependentUpon>
     </Compile>
@@ -177,14 +179,203 @@
     <Compile Include="Views\Settings\Options.xaml.cs">
       <DependentUpon>Options.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SplashScreen.xaml.cs">
+      <DependentUpon>SplashScreen.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
     <Content Include="Assets\background.jpg" />
-    <Content Include="Assets\city.png" />
+    <Content Include="Assets\BadgeLogo.scale-100.png" />
     <Content Include="Assets\clockBG.jpg" />
+    <Content Include="Assets\CountryFlagsTile\ad.png" />
+    <Content Include="Assets\CountryFlagsTile\ae.png" />
+    <Content Include="Assets\CountryFlagsTile\af.png" />
+    <Content Include="Assets\CountryFlagsTile\al.png" />
+    <Content Include="Assets\CountryFlagsTile\am.png" />
+    <Content Include="Assets\CountryFlagsTile\ao.png" />
+    <Content Include="Assets\CountryFlagsTile\ar.png" />
+    <Content Include="Assets\CountryFlagsTile\at.png" />
+    <Content Include="Assets\CountryFlagsTile\au.png" />
+    <Content Include="Assets\CountryFlagsTile\az.png" />
+    <Content Include="Assets\CountryFlagsTile\ba.png" />
+    <Content Include="Assets\CountryFlagsTile\bb.png" />
+    <Content Include="Assets\CountryFlagsTile\bd.png" />
+    <Content Include="Assets\CountryFlagsTile\be.png" />
+    <Content Include="Assets\CountryFlagsTile\bf.png" />
+    <Content Include="Assets\CountryFlagsTile\bg.png" />
+    <Content Include="Assets\CountryFlagsTile\bh.png" />
+    <Content Include="Assets\CountryFlagsTile\bi.png" />
+    <Content Include="Assets\CountryFlagsTile\bj.png" />
+    <Content Include="Assets\CountryFlagsTile\bn.png" />
+    <Content Include="Assets\CountryFlagsTile\bo.png" />
+    <Content Include="Assets\CountryFlagsTile\br.png" />
+    <Content Include="Assets\CountryFlagsTile\bs.png" />
+    <Content Include="Assets\CountryFlagsTile\bt.png" />
+    <Content Include="Assets\CountryFlagsTile\bw.png" />
+    <Content Include="Assets\CountryFlagsTile\by.png" />
+    <Content Include="Assets\CountryFlagsTile\bz.png" />
+    <Content Include="Assets\CountryFlagsTile\ca.png" />
+    <Content Include="Assets\CountryFlagsTile\cd.png" />
+    <Content Include="Assets\CountryFlagsTile\cf.png" />
+    <Content Include="Assets\CountryFlagsTile\cg.png" />
+    <Content Include="Assets\CountryFlagsTile\ch.png" />
+    <Content Include="Assets\CountryFlagsTile\ci.png" />
+    <Content Include="Assets\CountryFlagsTile\cl.png" />
+    <Content Include="Assets\CountryFlagsTile\cm.png" />
+    <Content Include="Assets\CountryFlagsTile\cn.png" />
+    <Content Include="Assets\CountryFlagsTile\co.png" />
+    <Content Include="Assets\CountryFlagsTile\cr.png" />
+    <Content Include="Assets\CountryFlagsTile\cu.png" />
+    <Content Include="Assets\CountryFlagsTile\cv.png" />
+    <Content Include="Assets\CountryFlagsTile\cw.png" />
+    <Content Include="Assets\CountryFlagsTile\cy.png" />
+    <Content Include="Assets\CountryFlagsTile\cz.png" />
+    <Content Include="Assets\CountryFlagsTile\de.png" />
+    <Content Include="Assets\CountryFlagsTile\dj.png" />
+    <Content Include="Assets\CountryFlagsTile\dk.png" />
+    <Content Include="Assets\CountryFlagsTile\do.png" />
+    <Content Include="Assets\CountryFlagsTile\dz.png" />
+    <Content Include="Assets\CountryFlagsTile\ec.png" />
+    <Content Include="Assets\CountryFlagsTile\ee.png" />
+    <Content Include="Assets\CountryFlagsTile\eg.png" />
+    <Content Include="Assets\CountryFlagsTile\eh.png" />
+    <Content Include="Assets\CountryFlagsTile\er.png" />
+    <Content Include="Assets\CountryFlagsTile\es.png" />
+    <Content Include="Assets\CountryFlagsTile\et.png" />
+    <Content Include="Assets\CountryFlagsTile\fi.png" />
+    <Content Include="Assets\CountryFlagsTile\fj.png" />
+    <Content Include="Assets\CountryFlagsTile\fr.png" />
+    <Content Include="Assets\CountryFlagsTile\ga.png" />
+    <Content Include="Assets\CountryFlagsTile\gb.png" />
+    <Content Include="Assets\CountryFlagsTile\ge.png" />
+    <Content Include="Assets\CountryFlagsTile\GF.png" />
+    <Content Include="Assets\CountryFlagsTile\gh.png" />
+    <Content Include="Assets\CountryFlagsTile\gm.png" />
+    <Content Include="Assets\CountryFlagsTile\gn.png" />
+    <Content Include="Assets\CountryFlagsTile\GP.png" />
+    <Content Include="Assets\CountryFlagsTile\gq.png" />
+    <Content Include="Assets\CountryFlagsTile\gr.png" />
+    <Content Include="Assets\CountryFlagsTile\gt.png" />
+    <Content Include="Assets\CountryFlagsTile\gw.png" />
+    <Content Include="Assets\CountryFlagsTile\gy.png" />
+    <Content Include="Assets\CountryFlagsTile\hk.png" />
+    <Content Include="Assets\CountryFlagsTile\hn.png" />
+    <Content Include="Assets\CountryFlagsTile\hr.png" />
+    <Content Include="Assets\CountryFlagsTile\ht.png" />
+    <Content Include="Assets\CountryFlagsTile\hu.png" />
+    <Content Include="Assets\CountryFlagsTile\id.png" />
+    <Content Include="Assets\CountryFlagsTile\ie.png" />
+    <Content Include="Assets\CountryFlagsTile\il.png" />
+    <Content Include="Assets\CountryFlagsTile\in.png" />
+    <Content Include="Assets\CountryFlagsTile\iq.png" />
+    <Content Include="Assets\CountryFlagsTile\ir.png" />
+    <Content Include="Assets\CountryFlagsTile\is.png" />
+    <Content Include="Assets\CountryFlagsTile\it.png" />
+    <Content Include="Assets\CountryFlagsTile\jm.png" />
+    <Content Include="Assets\CountryFlagsTile\jo.png" />
+    <Content Include="Assets\CountryFlagsTile\jp.png" />
+    <Content Include="Assets\CountryFlagsTile\ke.png" />
+    <Content Include="Assets\CountryFlagsTile\kg.png" />
+    <Content Include="Assets\CountryFlagsTile\kh.png" />
+    <Content Include="Assets\CountryFlagsTile\kp.png" />
+    <Content Include="Assets\CountryFlagsTile\kr.png" />
+    <Content Include="Assets\CountryFlagsTile\kw.png" />
+    <Content Include="Assets\CountryFlagsTile\kz.png" />
+    <Content Include="Assets\CountryFlagsTile\la.png" />
+    <Content Include="Assets\CountryFlagsTile\lb.png" />
+    <Content Include="Assets\CountryFlagsTile\lk.png" />
+    <Content Include="Assets\CountryFlagsTile\lr.png" />
+    <Content Include="Assets\CountryFlagsTile\ls.png" />
+    <Content Include="Assets\CountryFlagsTile\lt.png" />
+    <Content Include="Assets\CountryFlagsTile\lu.png" />
+    <Content Include="Assets\CountryFlagsTile\lv.png" />
+    <Content Include="Assets\CountryFlagsTile\ly.png" />
+    <Content Include="Assets\CountryFlagsTile\ma.png" />
+    <Content Include="Assets\CountryFlagsTile\md.png" />
+    <Content Include="Assets\CountryFlagsTile\me.png" />
+    <Content Include="Assets\CountryFlagsTile\mg.png" />
+    <Content Include="Assets\CountryFlagsTile\mk.png" />
+    <Content Include="Assets\CountryFlagsTile\ml.png" />
+    <Content Include="Assets\CountryFlagsTile\mm.png" />
+    <Content Include="Assets\CountryFlagsTile\mn.png" />
+    <Content Include="Assets\CountryFlagsTile\mo.png" />
+    <Content Include="Assets\CountryFlagsTile\mq.png" />
+    <Content Include="Assets\CountryFlagsTile\mr.png" />
+    <Content Include="Assets\CountryFlagsTile\mu.png" />
+    <Content Include="Assets\CountryFlagsTile\mv.png" />
+    <Content Include="Assets\CountryFlagsTile\mw.png" />
+    <Content Include="Assets\CountryFlagsTile\mx.png" />
+    <Content Include="Assets\CountryFlagsTile\my.png" />
+    <Content Include="Assets\CountryFlagsTile\mz.png" />
+    <Content Include="Assets\CountryFlagsTile\na.png" />
+    <Content Include="Assets\CountryFlagsTile\nc.png" />
+    <Content Include="Assets\CountryFlagsTile\ne.png" />
+    <Content Include="Assets\CountryFlagsTile\ng.png" />
+    <Content Include="Assets\CountryFlagsTile\ni.png" />
+    <Content Include="Assets\CountryFlagsTile\nl.png" />
+    <Content Include="Assets\CountryFlagsTile\no.png" />
+    <Content Include="Assets\CountryFlagsTile\np.png" />
+    <Content Include="Assets\CountryFlagsTile\nz.png" />
+    <Content Include="Assets\CountryFlagsTile\om.png" />
+    <Content Include="Assets\CountryFlagsTile\pa.png" />
+    <Content Include="Assets\CountryFlagsTile\pe.png" />
+    <Content Include="Assets\CountryFlagsTile\pg.png" />
+    <Content Include="Assets\CountryFlagsTile\ph.png" />
+    <Content Include="Assets\CountryFlagsTile\pk.png" />
+    <Content Include="Assets\CountryFlagsTile\pl.png" />
+    <Content Include="Assets\CountryFlagsTile\pr.png" />
+    <Content Include="Assets\CountryFlagsTile\ps.png" />
+    <Content Include="Assets\CountryFlagsTile\pt.png" />
+    <Content Include="Assets\CountryFlagsTile\py.png" />
+    <Content Include="Assets\CountryFlagsTile\qa.png" />
+    <Content Include="Assets\CountryFlagsTile\re.png" />
+    <Content Include="Assets\CountryFlagsTile\ro.png" />
+    <Content Include="Assets\CountryFlagsTile\rs.png" />
+    <Content Include="Assets\CountryFlagsTile\ru.png" />
+    <Content Include="Assets\CountryFlagsTile\rw.png" />
+    <Content Include="Assets\CountryFlagsTile\sa.png" />
+    <Content Include="Assets\CountryFlagsTile\sb.png" />
+    <Content Include="Assets\CountryFlagsTile\sd.png" />
+    <Content Include="Assets\CountryFlagsTile\se.png" />
+    <Content Include="Assets\CountryFlagsTile\sg.png" />
+    <Content Include="Assets\CountryFlagsTile\si.png" />
+    <Content Include="Assets\CountryFlagsTile\sk.png" />
+    <Content Include="Assets\CountryFlagsTile\sl.png" />
+    <Content Include="Assets\CountryFlagsTile\sn.png" />
+    <Content Include="Assets\CountryFlagsTile\so.png" />
+    <Content Include="Assets\CountryFlagsTile\sr.png" />
+    <Content Include="Assets\CountryFlagsTile\ss.png" />
+    <Content Include="Assets\CountryFlagsTile\st.png" />
+    <Content Include="Assets\CountryFlagsTile\sv.png" />
+    <Content Include="Assets\CountryFlagsTile\sy.png" />
+    <Content Include="Assets\CountryFlagsTile\sz.png" />
+    <Content Include="Assets\CountryFlagsTile\td.png" />
+    <Content Include="Assets\CountryFlagsTile\tg.png" />
+    <Content Include="Assets\CountryFlagsTile\th.png" />
+    <Content Include="Assets\CountryFlagsTile\tj.png" />
+    <Content Include="Assets\CountryFlagsTile\tl.png" />
+    <Content Include="Assets\CountryFlagsTile\tm.png" />
+    <Content Include="Assets\CountryFlagsTile\tn.png" />
+    <Content Include="Assets\CountryFlagsTile\tr.png" />
+    <Content Include="Assets\CountryFlagsTile\tt.png" />
+    <Content Include="Assets\CountryFlagsTile\tw.png" />
+    <Content Include="Assets\CountryFlagsTile\tz.png" />
+    <Content Include="Assets\CountryFlagsTile\ua.png" />
+    <Content Include="Assets\CountryFlagsTile\ug.png" />
+    <Content Include="Assets\CountryFlagsTile\us.png" />
+    <Content Include="Assets\CountryFlagsTile\uy.png" />
+    <Content Include="Assets\CountryFlagsTile\uz.png" />
+    <Content Include="Assets\CountryFlagsTile\ve.png" />
+    <Content Include="Assets\CountryFlagsTile\vn.png" />
+    <Content Include="Assets\CountryFlagsTile\xk.png" />
+    <Content Include="Assets\CountryFlagsTile\ye.png" />
+    <Content Include="Assets\CountryFlagsTile\yt.png" />
+    <Content Include="Assets\CountryFlagsTile\za.png" />
+    <Content Include="Assets\CountryFlagsTile\zm.png" />
+    <Content Include="Assets\CountryFlagsTile\zw.png" />
     <Content Include="Assets\CountryFlags\ad.png" />
     <Content Include="Assets\CountryFlags\ae.png" />
     <Content Include="Assets\CountryFlags\af.png" />
@@ -361,6 +552,7 @@
     <Content Include="Assets\CountryFlags\ua.png" />
     <Content Include="Assets\CountryFlags\ug.png" />
     <Content Include="Assets\CountryFlags\us.png" />
+    <Content Include="Assets\CountryFlags\US_Tile.png" />
     <Content Include="Assets\CountryFlags\uy.png" />
     <Content Include="Assets\CountryFlags\uz.png" />
     <Content Include="Assets\CountryFlags\ve.png" />
@@ -371,8 +563,12 @@
     <Content Include="Assets\CountryFlags\za.png" />
     <Content Include="Assets\CountryFlags\zm.png" />
     <Content Include="Assets\CountryFlags\zw.png" />
+    <Content Include="Assets\globe.png" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-140.png" />
+    <Content Include="Assets\Square310x310Logo.scale-100.png" />
+    <Content Include="Assets\Sunrise.png" />
+    <Content Include="Assets\Sunset.png" />
     <Content Include="Assets\WideLogo.scale-100.png" />
     <Content Include="Assets\cities.csv" />
     <None Include="Package.StoreAssociation.xml" />
@@ -426,6 +622,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\SplashScreen.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="lb_windows_sdk">
@@ -445,7 +645,12 @@
       <HintPath>..\packages\WinRTTimeZones.0.7.4\lib\netcore45\TimeZones.NetCore.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\UniversalWorldClock.Tasks\UniversalWorldClock.Tasks.csproj">
+      <Project>{18a2324f-f0bc-4f35-8240-5ebb526999af}</Project>
+      <Name>UniversalWorldClock.Tasks</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>

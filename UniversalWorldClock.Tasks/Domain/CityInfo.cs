@@ -1,9 +1,10 @@
 ﻿using System;
+using Windows.Foundation.Metadata;
 using TimeZones;
 
-namespace UniversalWorldClock.Domain
+namespace UniversalWorldClock.Tasks.Domain
 {
-    public sealed class CityInfo:IEquatable<CityInfo>
+    public sealed class CityInfo
     {
         private TimeSpan? _currentOffset;
 
@@ -18,8 +19,7 @@ namespace UniversalWorldClock.Domain
         public string TimeZoneId { get; set; }
         public string CountryName { get; set; }
         public string State { get; set; }
-        public TimeSpan CurrentOffset 
-		{
+        public TimeSpan CurrentOffset {
             get
             {
                 if (!_currentOffset.HasValue)
@@ -31,7 +31,7 @@ namespace UniversalWorldClock.Domain
                 return _currentOffset.Value;
             }
         }
-
+        [DefaultOverload]
         public bool Equals(CityInfo other)
         {
             if (ReferenceEquals(this, other))

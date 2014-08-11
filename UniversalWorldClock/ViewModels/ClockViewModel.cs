@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Windows.Input;
 using Windows.Foundation;
 using TimeZones;
@@ -15,7 +18,7 @@ namespace UniversalWorldClock.ViewModels
 {
     public sealed class ClockViewModel : ViewModelBase
     {
-        private readonly ClockInfo _info;
+        private readonly CityInfo _info;
         private readonly TimeShiftProvider _timeShiftProvider;
         private ITimeZoneEx _timeZoneService;
         private static readonly DispatcherTimer _timer = new DispatcherTimer();
@@ -28,7 +31,7 @@ namespace UniversalWorldClock.ViewModels
             _timer.Tick += ViewStateTracker;
         }
 
-        public ClockViewModel(ClockInfo info, TimeShiftProvider timeShiftProvider)
+        public ClockViewModel(CityInfo info, TimeShiftProvider timeShiftProvider)
         {
             _info = info;
             _timeShiftProvider = timeShiftProvider;
@@ -52,7 +55,7 @@ namespace UniversalWorldClock.ViewModels
 
         public string CityName
         {
-            get { return _info.CityName; }
+            get { return _info.Name; }
         } 
 
         public string CountryName
@@ -87,6 +90,46 @@ namespace UniversalWorldClock.ViewModels
             get { return _info.CountryCode; }
         }
 
+        public string Coordinates 
+        {
+            get
+            {
+                var latitude = GeoHelper.LatitudeFromDecimalDegrees(_info.Latitude);
+                var longtitude = GeoHelper.LongtitudeFromDecimalDegrees(_info.Longitude);
+                return string.Format("{0} {1}",latitude, longtitude);
+            }
+        }
+
+        public string TimeZone {
+            get { return _info.TimeZone; }
+        }  
+
+        public string TimeZoneId {
+            get { return _info.TimeZoneId; }
+        }
+
+        public ObservableCollection<SunInfo> SunInfo
+        {
+            get
+            {
+                var info = GetSunInfo().ToList();
+                return new ObservableCollection<SunInfo>(info);
+            }
+        }
+
+        private IEnumerable<SunInfo> GetSunInfo()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                var dateTime = Date.AddDays(i);
+                var sunInfo = GeoHelper.GetSunInfo(dateTime, _info.Latitude, -_info.Longitude);
+                sunInfo.SunSet = _timeZoneService.ConvertTime(sunInfo.SunSet).DateTime;
+                sunInfo.SunRise = _timeZoneService.ConvertTime(sunInfo.SunRise).DateTime;
+
+                yield return sunInfo;
+            }
+        }
+
         public bool IsTimeModifierVisible
         {
             get
@@ -111,15 +154,15 @@ namespace UniversalWorldClock.ViewModels
 
         private static TimeSpan CalculateTimerInterval(ViewState state)
         {
-            if (state != ViewState.Snapped)
+            if (state == ViewState.FullScreenLandscape)
                 return TimeSpan.FromSeconds(1);
 
-            if (state == ViewState.Snapped && DateTime.Now.Second == 0)
+            if ((state == ViewState.Snapped || state== ViewState.Narrow) && DateTime.Now.Second == 0)
             {
                 return TimeSpan.FromMinutes(1);
             }
 
-            if (state == ViewState.Snapped  && DateTime.Now.Second != 0)
+            if ((state == ViewState.Snapped || state == ViewState.Narrow) && DateTime.Now.Second != 0)
             {
                 var interval = (60 - DateTime.Now.Second);
                 return TimeSpan.FromSeconds(interval);

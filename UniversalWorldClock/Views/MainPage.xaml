@@ -33,7 +33,7 @@
             <GridView ItemsSource="{Binding Clocks}" 
                   VerticalContentAlignment="Stretch" 
                   SelectionMode="None"
-                  Margin="10,-238,-10,0"
+                  Margin="10,-238,0,0"
                   Padding="110,240,110,46"
                   IsDoubleTapEnabled="False"
                   IsItemClickEnabled="False"

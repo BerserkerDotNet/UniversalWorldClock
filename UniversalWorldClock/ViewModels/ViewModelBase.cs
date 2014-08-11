@@ -9,8 +9,19 @@ namespace UniversalWorldClock.ViewModels
 
         protected void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {
+            SignalPropertyChange(propertyName);
+        }
+
+        private void SignalPropertyChange(string propertyName)
+        {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+           
+        }
+
+        protected void ManualPropertyChanged(string propertyName = null)
+        {
+            SignalPropertyChange(propertyName);
         }
     }
 }

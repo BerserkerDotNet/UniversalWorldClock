@@ -17,8 +17,7 @@ namespace UniversalWorldClock.Runtime
 
         private static void InitMappings()
         {
-            _container.RegisterType<IDataRepository<CityInfo>, CitiesRepository>();
-            _container.RegisterType<IDataRepository<ClockInfo>, ClocksRepository>();
+            _container.RegisterType<IDataRepository<CityInfo>, DataRepository>();
             _container.RegisterType<TimeShiftProvider>(new ContainerControlledLifetimeManager());
         }
 

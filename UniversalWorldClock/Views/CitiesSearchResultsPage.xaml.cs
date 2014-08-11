@@ -10,51 +10,29 @@ using UniversalWorldClock.Runtime;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-// The Search Contract item template is documented at http://go.microsoft.com/fwlink/?LinkId=234240
-
 namespace UniversalWorldClock.Views
 {
-    /// <summary>
-    /// This page displays search results when a global search is directed to this application.
-    /// </summary>
     public sealed partial class CitiesSearchResultsPage : Common.LayoutAwarePage
     {
-        private static List<CityInfo> _cities = new List<CityInfo>();
         private string _queryText;
+
+        private IDataRepository<CityInfo> _citiesRepository;
 
         public CitiesSearchResultsPage()
         {
             this.InitializeComponent();
+            _citiesRepository = DependencyResolver.Resolve<IDataRepository<CityInfo>>();
         }
 
-        private async Task LoadCities()
-        {
-            var provider = DependencyResolver.Resolve<IDataRepository<CityInfo>>();
-            _cities = (await provider.Get()).ToList();
-        }
-
-        /// <summary>
-        /// Populates the page with content passed during navigation.  Any saved state is also
-        /// provided when recreating a page from a prior session.
-        /// </summary>
-        /// <param name="navigationParameter">The parameter value passed to
-        /// <see cref="Frame.Navigate(Type, Object)"/> when this page was initially requested.
-        /// </param>
-        /// <param name="pageState">A dictionary of state preserved by this page during an earlier
-        /// session.  This will be null the first time a page is visited.</param>
         protected async override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
             DefaultViewModel["IsInProgress"] = Visibility.Visible;
             _queryText = navigationParameter as String;
 
-            if (!_cities.Any())
-            {
-                await LoadCities();
-            }
-            var filteredCities = _cities.Where(c => c.Name.StartsWith(_queryText, StringComparison.OrdinalIgnoreCase)
+            var filteredCities = _citiesRepository.Get(c => c.Name.StartsWith(_queryText, StringComparison.OrdinalIgnoreCase)
                 );
 
-            var filteredCitiesByTimezone = _cities.Where(c => c.TimeZoneId.StartsWith(_queryText, StringComparison.OrdinalIgnoreCase));
+            var filteredCitiesByTimezone = _citiesRepository.Get(c => c.TimeZoneId.StartsWith(_queryText, StringComparison.OrdinalIgnoreCase));
             var filters = (from c in filteredCities
                            group c by c.CountryName
                                into g
@@ -192,16 +170,9 @@ namespace UniversalWorldClock.Views
         private void OnResultSelected(object sender, ItemClickEventArgs e)
         {
             var id = (e.ClickedItem as SearchResult).Id;
-            var result = _cities.Single(x => x.Id == id);
-            var info = new ClockInfo
-            {
-                CityName = result.Name,
-                TimeZoneId = result.TimeZoneId,
-                CountryCode = result.CountryCode,
-                CountryName = result.CountryName
-            };
+            var result = _citiesRepository.Get(x => x.Id == id).Single();
 
-            ViewModelStorage.Main.AddClock(info);
+            ViewModelStorage.Main.AddClock(result);
 
             var previousContent = Window.Current.Content;
             var frame = previousContent as Frame;
