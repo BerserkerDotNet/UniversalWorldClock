@@ -228,7 +228,8 @@
     </Grid>
 
     <Page.BottomAppBar>
-        <AppBar>
+        <AppBar IsSticky="True">
+
             <Grid x:Name="uiAppBarShiftView" HorizontalAlignment="Left" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>

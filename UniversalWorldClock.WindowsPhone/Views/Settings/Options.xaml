@@ -1,0 +1,38 @@
+﻿<UserControl
+    x:Class="UniversalWorldClock.Views.Settings.Options"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:UniversalWorldClock.Views.Settings"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Common="using:UniversalWorldClock.Common"
+    xmlns:ViewModels="using:UniversalWorldClock.ViewModels" mc:Ignorable="d"
+    d:DesignHeight="700"
+    d:DesignWidth="400" >
+    <UserControl.DataContext>
+        <ViewModels:SettingsViewModel />
+    </UserControl.DataContext>
+        <Grid Background="#464646">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Background="CornflowerBlue">
+            <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
+                <Button Style="{StaticResource SnappedBackButtonStyle}" Click="OnBackClicked"/>
+                <TextBlock Text="Clock Options" Style="{StaticResource SubheaderTextStyle}" Margin="20,0,0,30" VerticalAlignment="Center"/>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Margin="40,40,0,0">
+            <StackPanel Orientation="Horizontal" Margin="0,40,0,0">
+                <TextBlock Text="Clock size:" Margin="7" Style="{StaticResource TitleTextStyle}" Width="90"/>
+                <ComboBox Margin="5" Width="120"  ItemsSource="{Binding ClockSizeList}" SelectedValue="{Binding ClockSize, Mode=TwoWay}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,40,0,0">
+                <TextBlock Text="Clock format:" Margin="7" Style="{StaticResource TitleTextStyle}" Width="90"/>
+                <ComboBox Margin="5" Width="120" ItemsSource="{Binding ClockFormatList}" SelectedValue="{Binding ClockFormat, Mode=TwoWay}"/>
+            </StackPanel>
+            <Button Content="Save" HorizontalAlignment="Left" Margin="0,20,0,0" Command="{Binding Save}"/>
+        </StackPanel>
+    </Grid>
+
+</UserControl>

@@ -52,9 +52,9 @@ namespace UniversalWorldClock.Tasks
                                    </visual></tile>"; 
         #endregion
 
-        private static Dictionary<string, ITimeZoneEx> _timeZoneServices = new Dictionary<string, ITimeZoneEx>(); 
-        private Random _random = new Random();
+        private readonly Random _random = new Random();
         private static object _locker = new object();
+        private Dictionary<CityInfo, DateTime> _baseDateTimes;
 
         public IAsyncAction ReSchedule(IEnumerable<CityInfo> userCities)
         {
@@ -96,21 +96,20 @@ namespace UniversalWorldClock.Tasks
             }
             var plannedUpdated = tileUpdater.GetScheduledTileNotifications();
             var now = DateTime.Now;
-            var planTill = now.AddMinutes(20);
 
-            var updateTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0).AddMinutes(1);
+            var baseTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0, DateTimeKind.Local).AddMinutes(1);
             if (plannedUpdated.Count > 0)
-                updateTime = plannedUpdated.Select(x => x.DeliveryTime.DateTime).Union(new[] { updateTime }).Max();
-            Stopwatch sw = new Stopwatch();
+                baseTime = plannedUpdated.Select(x => x.DeliveryTime.DateTime).Union(new[] { baseTime }).Max();
+            var sw = new Stopwatch();
             sw.Start();
-            ScheduleTileUpdate(userCities, now, tileUpdater, clockFormat);
+            CalculateBaseTime(userCities, baseTime);
 
-            for (var startPlanning = updateTime; startPlanning < planTill; startPlanning = startPlanning.AddMinutes(1))
+            for (var i=0; i<=20;i++)
             {
                 try
                 {
-                    ScheduleTileUpdate(userCities, startPlanning, tileUpdater, clockFormat);
-                    Debug.WriteLine("SCHEDULED FOR: {0}; Elapsed: {1}", startPlanning, sw.Elapsed);
+                    ScheduleTileUpdate(baseTime, TimeSpan.FromMinutes(i), tileUpdater, clockFormat);
+                    //Debug.WriteLine("SCHEDULED FOR: {0}; Elapsed: {1}", baseTime.AddMinutes(i), sw.Elapsed);
                 }
                 catch (Exception e)
                 {
@@ -121,6 +120,11 @@ namespace UniversalWorldClock.Tasks
             Debug.WriteLine("Total time: {0}", sw.Elapsed);
         }
 
+        private void CalculateBaseTime(IEnumerable<CityInfo> userCities, DateTime baseTime)
+        {
+            _baseDateTimes = userCities.ToDictionary(u => u, u => GetUserCityTime(u, baseTime));
+        }
+
         private void ClearQueue(TileUpdater tileUpdater)
         {
             foreach (var update in tileUpdater.GetScheduledTileNotifications())
@@ -129,31 +133,28 @@ namespace UniversalWorldClock.Tasks
             }
         }
 
-        private void ScheduleTileUpdate(IEnumerable<CityInfo> userCities, DateTime dateTime, TileUpdater tileUpdater, ClockFormat clockFormat)
+        private void ScheduleTileUpdate(DateTime baseTime, TimeSpan shift, TileUpdater tileUpdater, ClockFormat clockFormat)
         {
-            var interval = 60/userCities.Count();
+            var shiftedTime = baseTime.Add(shift);
+            var interval = 60/_baseDateTimes.Count();
             var i = 0;
-            var calculatedCitiesInfo = userCities.Select(c => new CalculatedCityInfo { CityInfo = c, DestinationTime = GetUserCityTime(c, dateTime) }).ToList();
+            var calculatedCitiesInfo = _baseDateTimes.Select(c => new CalculatedCityInfo { CityInfo = c.Key, DestinationTime = c.Value.Add(shift) }).ToList();
             foreach (var info in calculatedCitiesInfo)
             {
-                var tileXmlNow = GetTileUpdateMessage(info, calculatedCitiesInfo, userCities.Count(), clockFormat);
+                var tileXmlNow = GetTileUpdateMessage(info, calculatedCitiesInfo, _baseDateTimes.Count(), clockFormat);
                 var document = new XmlDocument();
                 document.LoadXml(tileXmlNow);
 
-                Stopwatch sw=new Stopwatch();
-                sw.Start();
-                var deliveryTime = dateTime.AddSeconds(i*interval);
+                var deliveryTime = shiftedTime.AddSeconds(i * interval);
                 if (deliveryTime <= DateTime.Now)
                 {
-                    tileUpdater.Update(new TileNotification(document){ExpirationTime = dateTime.AddSeconds(interval)});
+                    tileUpdater.Update(new TileNotification(document) { ExpirationTime = shiftedTime.AddSeconds(interval) });
                 }
                 else
                 {
                     var scheduledNotification = new ScheduledTileNotification(document, deliveryTime) { ExpirationTime = deliveryTime.AddSeconds(interval) };
                     tileUpdater.AddToSchedule(scheduledNotification);
                 }
-                sw.Stop();
-                Debug.WriteLine("Update posted: {0}", sw.Elapsed);
                 i++;
             }
         }
@@ -186,20 +187,8 @@ namespace UniversalWorldClock.Tasks
 
         private DateTime GetUserCityTime(CityInfo info, DateTime time)
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            ITimeZoneEx service = null;
-            if (_timeZoneServices.ContainsKey(info.TimeZoneId))
-                service = _timeZoneServices[info.TimeZoneId];
-            else
-            {
-                service = TimeZoneService.FindSystemTimeZoneById(info.TimeZoneId);
-                _timeZoneServices.Add(info.TimeZoneId, service);
-            }
+            var service = TimeZoneService.FindSystemTimeZoneById(info.TimeZoneId);
             var userCityTime = service.ConvertTime(time);
-
-            sw.Stop();
-            Debug.WriteLine("Calculated: {0} for {1}", sw.Elapsed, time);
             return userCityTime.DateTime;
         }
 

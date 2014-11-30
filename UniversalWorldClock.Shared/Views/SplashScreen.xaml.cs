@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
-using UniversalWorldClock.Common;
 using UniversalWorldClock.Data;
-using UniversalWorldClock.Runtime;
 using UniversalWorldClock.Tasks;
 
 namespace UniversalWorldClock.Views

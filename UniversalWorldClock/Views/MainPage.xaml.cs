@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using LeadBolt.Windows8.AppAd;
 using UniversalWorldClock.Common;
-using UniversalWorldClock.Domain;
-using UniversalWorldClock.ViewModels;
 using UniversalWorldClock.Views.Settings;
 using Windows.System;
+ #if !WINDOWS_PHONE_APP
 using Windows.UI.ApplicationSettings;
+#endif
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -31,12 +27,14 @@ namespace UniversalWorldClock.Views
             
         }
 
+        #if !WINDOWS_PHONE_APP
         void MainPage_CommandsRequested(SettingsPane sender, SettingsPaneCommandsRequestedEventArgs args)
         {
             args.Request.ApplicationCommands.Add(new SettingsCommand("UC_Setting", "Options", ClockSettings));
             args.Request.ApplicationCommands.Add(new SettingsCommand("UC_Privacy", "Privacy Policy", PrivacyPolicy));
             args.Request.ApplicationCommands.Add(new SettingsCommand("UC_Donate", "Donate", Donate));
         }
+#endif
 
         private void Donate(IUICommand command)
         {
@@ -72,17 +70,21 @@ namespace UniversalWorldClock.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            #if !WINDOWS_PHONE_APP
             if (ApplicationView.Value != ApplicationViewState.Snapped)
             {
                 uiCurrentLocation.Margin = new Thickness(Window.Current.Bounds.Width - 1000, 0, 0, 0);
             }
             SettingsPane.GetForCurrentView().CommandsRequested += MainPage_CommandsRequested;
+#endif
             base.OnNavigatedTo(e);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
+#if !WINDOWS_PHONE_APP
             SettingsPane.GetForCurrentView().CommandsRequested -= MainPage_CommandsRequested;
+#endif
             base.OnNavigatedFrom(e);
         }
 

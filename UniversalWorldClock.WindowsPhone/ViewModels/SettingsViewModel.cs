@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
+ #if !WINDOWS_PHONE_APP
 using Windows.UI.ApplicationSettings;
+#endif
 using UniversalWorldClock.Common;
 using UniversalWorldClock.Runtime;
 using Windows.UI.Xaml;
@@ -60,7 +62,9 @@ namespace UniversalWorldClock.ViewModels
             var f =(Window.Current.Content as Frame);
             f.Navigate(f.Content.GetType());
             f.GoBack();
+             #if !WINDOWS_PHONE_APP
             SettingsPane.Show();
+#endif
         }
 
         public IList<string> ClockSizeList

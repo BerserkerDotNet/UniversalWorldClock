@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,12 +9,10 @@ using UniversalWorldClock.Runtime;
 using UniversalWorldClock.Tasks;
 using UniversalWorldClock.Views;
 using Windows.ApplicationModel.Search;
-using Windows.Devices.Geolocation;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 
 namespace UniversalWorldClock.ViewModels
 {

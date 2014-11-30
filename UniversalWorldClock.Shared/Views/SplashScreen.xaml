@@ -10,7 +10,7 @@
 
     <Grid Background="#464646">
         <StackPanel VerticalAlignment="Center" Margin="0,50,0,0">
-            <Image Source="../Assets/SplashScreen.png" Width="620"/>
+            <Image Source="../Assets/SplashScreen.png" MaxWidth="620"/>
             <ProgressRing Width="50" Height="50" IsActive="True" Foreground="#6EA4CD"/>
         </StackPanel>
     </Grid>
