@@ -6,11 +6,11 @@ using UniversalWorldClock.Domain;
 
 namespace UniversalWorldClock.Data
 {
-    public interface IDataRepository<T>
+    public interface IDataRepository
     {
-        Task Save(IEnumerable<T> data);
-        IEnumerable<T> Get(Func<T, bool> predicate);
-        IEnumerable<T> GetAll();
+        Task Save(IEnumerable<CityInfo> data);
+        IEnumerable<CityInfo> Get(Func<CityInfo, bool> predicate);
+        IEnumerable<CityInfo> GetAll();
         IEnumerable<CityInfo> GetUsersCities();
     }
 }

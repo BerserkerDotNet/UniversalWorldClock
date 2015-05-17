@@ -56,15 +56,16 @@ namespace UniversalWorldClock.Tasks
         private static object _locker = new object();
         private Dictionary<CityInfo, DateTime> _baseDateTimes;
 
-        public IAsyncAction ReSchedule(IEnumerable<CityInfo> userCities)
+        public IAsyncOperation<bool> ReSchedule(IEnumerable<CityInfo> userCities)
         {
-            return AsyncInfo.Run(async t =>
+            return AsyncInfo.Run(t =>
                                        {
                                            lock (_locker)
                                            {
                                                Schedule(userCities, true);
                                            }
 
+                                           return Task.FromResult(true);
                                        });
         }
 
@@ -109,7 +110,7 @@ namespace UniversalWorldClock.Tasks
                 try
                 {
                     ScheduleTileUpdate(baseTime, TimeSpan.FromMinutes(i), tileUpdater, clockFormat);
-                    //Debug.WriteLine("SCHEDULED FOR: {0}; Elapsed: {1}", baseTime.AddMinutes(i), sw.Elapsed);
+                   // Debug.WriteLine("SCHEDULED FOR: {0}; Elapsed: {1}", baseTime.AddMinutes(i), sw.Elapsed);
                 }
                 catch (Exception e)
                 {

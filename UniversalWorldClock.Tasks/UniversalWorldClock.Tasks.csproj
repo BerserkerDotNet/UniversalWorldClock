@@ -110,23 +110,25 @@
     <Compile Include="UCSettings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\netcore45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="TimeZones">
-      <HintPath>..\packages\WinRTTimeZones.0.7.4\lib\netcore45\TimeZones.dll</HintPath>
-    </Reference>
-    <Reference Include="TimeZones.NetCore">
-      <HintPath>..\packages\WinRTTimeZones.0.7.4\lib\netcore45\TimeZones.NetCore.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="UniversalWorldClock_StoreKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <TargetPlatform Include="Windows, Version=8.1" />
     <TargetPlatform Include="WindowsPhoneApp, Version=8.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="TimeZones">
+      <HintPath>..\packages\WinRTTimeZones.1.1.2\lib\portable-win81+wpa81\TimeZones.dll</HintPath>
+    </Reference>
+    <Reference Include="TimeZones.Platform">
+      <HintPath>..\packages\WinRTTimeZones.1.1.2\lib\portable-win81+wpa81\TimeZones.Platform.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>

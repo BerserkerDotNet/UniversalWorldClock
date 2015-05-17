@@ -1,0 +1,30 @@
+﻿<UserControl
+    x:Class="UniversalWorldClock.Views.TimeShifter"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mvvm="using:Microsoft.Practices.Prism.Mvvm"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    mvvm:ViewModelLocator.AutoWireViewModel="True"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400" >
+    <interactivity:Interaction.Behaviors>
+        <core:EventTriggerBehavior EventName="Loaded">
+            <core:InvokeCommandAction Command="{Binding StartShift}"/>
+        </core:EventTriggerBehavior>
+        <core:EventTriggerBehavior EventName="Unloaded">
+            <core:InvokeCommandAction Command="{Binding EndShift}"/>
+        </core:EventTriggerBehavior>
+    </interactivity:Interaction.Behaviors>
+    <StackPanel  Margin="10,0,0,0">
+        <TextBlock Text="Hours:" Style="{StaticResource TitleTextBlockStyle}" />
+        <Slider Value="{Binding GlobalHourTimeShift, Mode=TwoWay}" 
+                Maximum="24" Minimum="-12" StepFrequency="1" />
+        <TextBlock Text="Minutes:" Style="{StaticResource TitleTextBlockStyle}"/>
+        <Slider Value="{Binding GlobalMinuteTimeShift, Mode=TwoWay}" 
+                Maximum="59" Minimum="0" StepFrequency="1"/>
+    </StackPanel>
+</UserControl>

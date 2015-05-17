@@ -1,0 +1,12 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- overrides -->
+    <SolidColorBrush x:Key="ListViewItemSelectedPointerOverBackgroundThemeBrush" Color="#00FFFFFF" />
+    <SolidColorBrush x:Key="ListViewItemSelectedPointerOverBorderThemeBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="ListViewItemSelectedBackgroundThemeBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="ListViewItemPointerOverBackgroundThemeBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="ListViewItemSelectedForegroundThemeBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ListViewItemCheckSelectingThemeBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="ListViewItemCheckThemeBrush" Color="Transparent" />
+</ResourceDictionary>

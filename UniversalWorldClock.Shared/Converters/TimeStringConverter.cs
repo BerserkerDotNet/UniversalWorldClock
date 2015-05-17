@@ -8,7 +8,6 @@ namespace UniversalWorldClock.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            
             var clockFormat = UCSettings.ClockFormat;
             var format = clockFormat == ClockFormat.TwentyFourClock
                              ? "{0:HH\\:mm}"

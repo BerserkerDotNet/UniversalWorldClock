@@ -1,68 +1,64 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
+using Windows.Devices.Geolocation;
+using Microsoft.Practices.Prism.Mvvm;
 using UniversalWorldClock.Data;
 using UniversalWorldClock.Domain;
-using UniversalWorldClock.Runtime;
-using Windows.Devices.Geolocation;
+using UniversalWorldClock.Services;
 
 namespace UniversalWorldClock.ViewModels
 {
-    public sealed class CurrentLocationViewModel : ViewModelBase
+    public sealed class CurrentLocationViewModel : ViewModel, IClockListner
     {
-        private readonly IDataRepository<CityInfo> _citiesRepository;
+        private readonly IDataRepository _citiesRepository;
+        private readonly IClock _clock;
 
         private CityInfo _locationCity;
-        private ClockViewModel _currentClockViewModel;
         private readonly Geolocator _geolocator = new Geolocator();
         private PositionStatus _positionStatus;
         private bool _isLoading;
+        private DateTime _date;
 
-        public CurrentLocationViewModel(IDataRepository<CityInfo> citiesRepository)
+        public CurrentLocationViewModel(IDataRepository citiesRepository, IClock clock)
         {
             _citiesRepository = citiesRepository;
+            _clock = clock;
             InitializeLocation();
         }
 
         public CityInfo CurrentCity
         {
             get { return _locationCity; }
-            private set
-            {
-                _locationCity = value;
-                OnPropertyChanged();
-            }
+            private set { SetProperty(ref _locationCity, value); }
         }
 
-        //NOTE: Smells bad!
-        public ClockViewModel CurrentTime
+        public DateTime Date
         {
-            get { return _currentClockViewModel; }
-            set
+            get { return _date; }
+            set { SetProperty(ref _date, value); }
+        }
+        
+        public TimeSpan UTCOffset
+        {
+            get
             {
-                _currentClockViewModel = value;
-                OnPropertyChanged();
+                if (_locationCity == null)
+                    return TimeSpan.Zero;
+
+                return _clock.GetOffset(_locationCity.TimeZoneId);
             }
         }
 
         public bool IsLoading
         {
             get { return _isLoading; }
-            set
-            {
-                _isLoading = value;
-                OnPropertyChanged();
-            }
+            set { SetProperty(ref _isLoading, value); }
         }
 
         public PositionStatus Status
         {
             get { return _positionStatus; }
-            private set
-            {
-                _positionStatus = value;
-                OnPropertyChanged();
-            }
+            private set { SetProperty(ref _positionStatus, value); }
         }
 
         private async void InitializeLocation()
@@ -73,8 +69,9 @@ namespace UniversalWorldClock.ViewModels
                 var pos = await _geolocator.GetGeopositionAsync();
                 var city = _citiesRepository.Get(c => Math.Abs(c.Latitude - pos.Coordinate.Latitude) < 0.03 && Math.Abs(c.Longitude - pos.Coordinate.Longitude) < 0.03).FirstOrDefault();
                 CurrentCity = city;
-                CurrentTime = DependencyResolver.Resolve<ClockViewModel>(new Tuple<string, object>("info", city));
                 Status = _geolocator.LocationStatus;
+                _clock.Register(this);
+                OnPropertyChanged(()=>UTCOffset);
             }
             catch
             {
@@ -85,6 +82,16 @@ namespace UniversalWorldClock.ViewModels
                 IsLoading = false;
             }
 
+        }
+
+        public CityInfo CityInfo
+        {
+            get { return _locationCity; }
+        }
+
+        public void TickTack(DateTime date)
+        {
+            Date = date;
         }
     }
 }

@@ -1,3 +1,3 @@
-MainPackage=E:\Programs\CSharp\UniversalWorldClock\UniversalWorldClock\bin\Release\UniversalWorldClock_1.5.0.20_Bundle\UniversalWorldClock_1.5.0.20_AnyCPU.appx
-SymbolPackage=E:\Programs\CSharp\UniversalWorldClock\UniversalWorldClock\AppPackages\UniversalWorldClock_1.5.0.20_Test\UniversalWorldClock_1.5.0.20_AnyCPU.appxsym
-ResourcePack=E:\Programs\CSharp\UniversalWorldClock\UniversalWorldClock\bin\Release\UniversalWorldClock_1.5.0.20_Bundle\UniversalWorldClock_1.5.0.20_scale-140.appx
+MainPackage=F:\Programs\CSharp\UniversalWorldClock\UniversalWorldClock\bin\Release\UniversalWorldClock_2.0.0.27_Bundle\UniversalWorldClock_2.0.0.27_AnyCPU.appx
+SymbolPackage=F:\Programs\CSharp\UniversalWorldClock\UniversalWorldClock\AppPackages\UniversalWorldClock_2.0.0.27_Test\UniversalWorldClock_2.0.0.27_AnyCPU.appxsym
+ResourcePack=F:\Programs\CSharp\UniversalWorldClock\UniversalWorldClock\bin\Release\UniversalWorldClock_2.0.0.27_Bundle\UniversalWorldClock_2.0.0.27_scale-140.appx

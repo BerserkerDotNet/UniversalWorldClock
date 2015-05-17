@@ -1,13 +1,9 @@
-using Windows.Foundation;
-using Windows.UI.ViewManagement;
-
 namespace UniversalWorldClock.Common
 {
     public static class ViewStateHelper
     {
-        public static ViewState GetViewState(ApplicationView view, Size windowSize)
+        public static ViewState GetViewState(double width)
         {
-            var width = windowSize.Width;
             if (width <=320)
                 return  ViewState.Snapped;
             else if (width > 320 && width <= 920)

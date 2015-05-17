@@ -1,21 +1,28 @@
 using System;
+using System.Collections.Generic;
+using System.Windows.Input;
+using Windows.UI.Xaml.Navigation;
+using Microsoft.Practices.Prism.Mvvm;
 using UniversalWorldClock.Common;
+using UniversalWorldClock.Runtime;
 
 namespace UniversalWorldClock.ViewModels
 {
-    public sealed class TimeShifterViewModel : ViewModelBase
+    public sealed class TimeShifterViewModel : ViewModel
     {
         private readonly TimeShiftProvider _timeShiftProvider;
         private TimeSpan _globalTimeShift;
-        private bool _isTimeShiftSuppresed = false;
+        private bool _isTimeShiftSuppresed;
 
         public TimeShifterViewModel(TimeShiftProvider timeShiftProvider)
         {
             _timeShiftProvider = timeShiftProvider;
             _timeShiftProvider.TimeShiftCleared += _timeShiftProvider_TimeShiftCleared;
+            StartShift = new RelayCommand(() => { _timeShiftProvider.StartTimeShift(); });
+            EndShift = new RelayCommand(() => { _timeShiftProvider.EndTimeShift(); });
         }
 
-        void _timeShiftProvider_TimeShiftCleared(object sender, EventArgs e)
+        private void _timeShiftProvider_TimeShiftCleared(object sender, EventArgs e)
         {
             _isTimeShiftSuppresed = true;
             GlobalHourTimeShift = 0;
@@ -23,7 +30,7 @@ namespace UniversalWorldClock.ViewModels
             _isTimeShiftSuppresed = false;
         }
 
-        private void UpdatetimeShift()
+        private void UpdateTimeShift()
         {
             if (!_isTimeShiftSuppresed)
                 _timeShiftProvider.TimeShift = _globalTimeShift;
@@ -38,12 +45,12 @@ namespace UniversalWorldClock.ViewModels
                 var isHoursBecomesNegative = (value < 0 && _globalTimeShift.Minutes > 0);
                 var isHoursBecomesPositiveOrZero = (value >= 0 && _globalTimeShift.Minutes < 0);
                 var minutes = isHoursBecomesNegative || isHoursBecomesPositiveOrZero
-                                  ? -_globalTimeShift.Minutes
-                                  : _globalTimeShift.Minutes;
+                    ? -_globalTimeShift.Minutes
+                    : _globalTimeShift.Minutes;
 
                 _globalTimeShift = new TimeSpan(0, value, minutes, 0);
-                OnPropertyChanged();
-             UpdatetimeShift();   
+                OnPropertyChanged(() => GlobalHourTimeShift);
+                UpdateTimeShift();
             }
         }
 
@@ -53,11 +60,13 @@ namespace UniversalWorldClock.ViewModels
             set
             {
                 var minutes = _globalTimeShift.Hours < 0 ? -value : value;
-                _globalTimeShift = new TimeSpan(0, _globalTimeShift.Hours, minutes,
-                                                0);
-                OnPropertyChanged();
-                UpdatetimeShift();
+                _globalTimeShift = new TimeSpan(0, _globalTimeShift.Hours, minutes, 0);
+                OnPropertyChanged(() => GlobalMinuteTimeShift);
+                UpdateTimeShift();
             }
         }
+
+        public ICommand StartShift { get; set; }
+        public ICommand EndShift { get; set; }
     }
 }

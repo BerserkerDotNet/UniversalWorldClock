@@ -9,19 +9,12 @@
     <Import_RootNamespace>UniversalWorldClock</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Common\Overrides.xaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Common\StandardStyles.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Controls\TimeMenu.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Controls\TimeSetter.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Controls\TimeShifter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -29,37 +22,30 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\SplashScreen.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Views\SplashScreenPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Common\BindableBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Common\ClockFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\GeoHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\LayoutAwarePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\RichTextColumns.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\StateAwareUserControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SuspensionManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\TimeShiftProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\TimeShiftStateChangedArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\UCSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ViewState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ViewStateHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Controls\TimeMenu.xaml.cs">
-      <DependentUpon>TimeMenu.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Controls\TimeSetter.xaml.cs">
-      <DependentUpon>TimeSetter.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Controls\TimeShifter.xaml.cs">
-      <DependentUpon>TimeShifter.xaml</DependentUpon>
-    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanNegationConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\ClockInfoToClockViewModelConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\CountryCodeToFlagFilePathConveretr.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\DataContextExtractor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\DateToShortStringConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\HoursArrayConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\InversedBoolToVisibilityConverter.cs" />
@@ -74,27 +60,36 @@
     <Compile Include="$(MSBuildThisFileDirectory)Data\DataRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\IDataRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Domain\CityInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Domain\SearchResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Domain\SunInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runtime\DependencyResolver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Experiences.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\AddCityMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\BeforeHideClocksMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\DeleteCityMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Runtime\RelayCommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Runtime\ViewModelStorage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\DefaultClock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ExtendedFrameNavigationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ICacheClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IClockListner.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IClock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\SimpleMemoryCacheClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ClockViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\CurrentLocationViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DesignTime\DesignMainPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Interfaces\IMainPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\TimeMenuViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\TimeSetterViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\TimeShifterViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\CurrentLocation.xaml.cs">
       <DependentUpon>CurrentLocation.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Views\SplashScreen.xaml.cs">
-      <DependentUpon>SplashScreen.xaml</DependentUpon>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\SplashScreenPage.xaml.cs">
+      <DependentUpon>SplashScreenPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)Assets\background.jpg" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\BadgeLogo.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\calendar.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\cities.csv" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\clockBG.jpg" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\CountryFlagsTile\ad.png" />
@@ -471,15 +466,23 @@
     <Content Include="$(MSBuildThisFileDirectory)Assets\CountryFlags\zm.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\CountryFlags\zw.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\globe.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LargeLogo310.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Logo.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Logo24.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\offset.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\SmallLogo.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\SplashScreen.scale-100.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\SplashScreen.scale-140.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Square310x310Logo.scale-100.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\StoreLogo.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Sunrise.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Sunset.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\time.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\weather.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\WideLogo.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\worldclock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="$(MSBuildThisFileDirectory)App.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </ApplicationDefinition>
   </ItemGroup>
 </Project>

@@ -1,25 +1,25 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+using Microsoft.Practices.Prism.Mvvm;
 using TimeZones;
 using UniversalWorldClock.Common;
+using UniversalWorldClock.Data;
 using UniversalWorldClock.Domain;
-using UniversalWorldClock.Runtime;
-using Windows.UI.Xaml;
 
 namespace UniversalWorldClock.ViewModels
 {
-    public sealed class TimeSetterViewModel : ViewModelBase
+    public sealed class TimeSetterViewModel : ViewModel
     {
         private readonly TimeShiftProvider _timeShiftProvider;
+        private readonly IDataRepository _dataRepository;
         private CityInfo _selectedClock;
-        private bool _isShiftUpdateSuppresed = false;
+        private bool _isShiftUpdateSuppresed;
         private TimeSpan _selectedTime;
 
-        public TimeSetterViewModel(TimeShiftProvider timeShiftProvider)
+        public TimeSetterViewModel(TimeShiftProvider timeShiftProvider, IDataRepository dataRepository)
         {
             _timeShiftProvider = timeShiftProvider;
+            _dataRepository = dataRepository;
             _timeShiftProvider.TimeShiftCleared += _timeShiftProvider_TimeShiftCleared;
         }
 
@@ -36,7 +36,7 @@ namespace UniversalWorldClock.ViewModels
             set
             {
                 _selectedClock = value;
-                OnPropertyChanged();
+                OnPropertyChanged(() => SelectedClock);
                 _timeShiftProvider.TimeShift = CalculateShift();
             }
         }
@@ -50,9 +50,14 @@ namespace UniversalWorldClock.ViewModels
                 {
                     _selectedTime = value;
                     UpdateTimeShift();
-                    OnPropertyChanged();
+                    OnPropertyChanged(() => SelectedTime);
                 }
             }
+        }
+
+        public IEnumerable<CityInfo> Clocks
+        {
+            get { return _dataRepository.GetUsersCities(); }
         }
 
         private void UpdateTimeShift()

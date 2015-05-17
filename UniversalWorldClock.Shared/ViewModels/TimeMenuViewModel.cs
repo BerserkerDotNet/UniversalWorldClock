@@ -1,10 +1,11 @@
 using System.Windows.Input;
+using Microsoft.Practices.Prism.Mvvm;
 using UniversalWorldClock.Common;
 using UniversalWorldClock.Runtime;
 
 namespace UniversalWorldClock.ViewModels
 {
-    public class TimeMenuViewModel : ViewModelBase
+    public class TimeMenuViewModel : ViewModel
     {
         private readonly TimeShiftProvider _timeShiftProvider;
 

@@ -1,41 +1,51 @@
-﻿using System;
-using UniversalWorldClock.Common;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
+﻿using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
+using Microsoft.Practices.Prism.Mvvm;
+using UniversalWorldClock.Domain;
+using UniversalWorldClock.ViewModels.Interfaces;
 
 namespace UniversalWorldClock.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class MainPage : Common.LayoutAwarePage
+    public sealed partial class MainPage: IView
     {
         public MainPage()
         {
             this.InitializeComponent();
-            
         }
 
-
-        protected override void OnSizeChanged(ApplicationView view)
+        private void ListView_OnHolding(object sender, HoldingRoutedEventArgs e)
         {
-            if (CurrentViewState != ViewState.Snapped)
-            {
-                uiCurrentLocation.Margin = new Thickness(Window.Current.Bounds.Width - 1000, 0, 0, 0);
-            }
-            base.OnSizeChanged(view);
+            var listView = sender as ListView;
+            if (listView != null)
+                listView.ReorderMode = ListViewReorderMode.Enabled;
         }
 
-        private void UiClockSelector_OnOpening(object sender, object e)
+        private void PopupMenu_OnLoaded(object sender, RoutedEventArgs e)
         {
-            uiCitySelectorControl.ClearText();
+            var popup = (sender as Popup);
+            if(popup==null)
+                return;
+            popup.VerticalOffset = Window.Current.Bounds.Height - 380;
         }
 
-        private void CitySelector_OnCitySelected(object sender, EventArgs e)
+        private void ListViewBase_OnItemClick(object sender, ItemClickEventArgs e)
         {
-            uiClockSelector.Hide();
+            ExecuteGoToDetails((CityInfo)e.ClickedItem);
+        }
+
+        private void UIElement_OnTapped(object sender, TappedRoutedEventArgs e)
+        {
+            var listView = (ListView)sender;
+            if (listView.ReorderMode == ListViewReorderMode.Enabled)
+                return;
+            ExecuteGoToDetails((CityInfo)listView.SelectedItem);
+        }
+
+        private void ExecuteGoToDetails(CityInfo item)
+        {
+            ((IMainPageViewModel)DataContext).GoToDetails.Execute(item);
         }
     }
 }

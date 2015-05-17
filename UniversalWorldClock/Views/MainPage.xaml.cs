@@ -1,40 +1,33 @@
 ﻿using System;
-using UniversalWorldClock.Common;
-using UniversalWorldClock.Views.Settings;
+using Windows.Storage.Streams;
 using Windows.System;
- #if !WINDOWS_PHONE_APP
-using Windows.UI.ApplicationSettings;
-#endif
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
-
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
+using UniversalWorldClock.Common;
+using UniversalWorldClock.ViewModels;
+#if !WINDOWS_PHONE_APP
+using Windows.UI.ApplicationSettings;
+#endif
 
 namespace UniversalWorldClock.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class MainPage : Common.LayoutAwarePage
+    public sealed partial class MainPage
     {
         public MainPage()
         {
             this.InitializeComponent();
-            
         }
 
-        #if !WINDOWS_PHONE_APP
         void MainPage_CommandsRequested(SettingsPane sender, SettingsPaneCommandsRequestedEventArgs args)
         {
             args.Request.ApplicationCommands.Add(new SettingsCommand("UC_Setting", "Options", ClockSettings));
             args.Request.ApplicationCommands.Add(new SettingsCommand("UC_Privacy", "Privacy Policy", PrivacyPolicy));
             args.Request.ApplicationCommands.Add(new SettingsCommand("UC_Donate", "Donate", Donate));
         }
-#endif
 
         private void Donate(IUICommand command)
         {
@@ -48,7 +41,7 @@ namespace UniversalWorldClock.Views
 
         private async void PrivacyPolicy(IUICommand command)
         {
-            await Windows.System.Launcher.LaunchUriAsync(new Uri("http://sdrv.ms/1fReV4E"));
+            await Launcher.LaunchUriAsync(new Uri("http://sdrv.ms/1fReV4E"));
         }
 
         private void OpenPopup(int width, UserControl child)
@@ -70,31 +63,36 @@ namespace UniversalWorldClock.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            #if !WINDOWS_PHONE_APP
-            if (ApplicationView.Value != ApplicationViewState.Snapped)
-            {
-                uiCurrentLocation.Margin = new Thickness(Window.Current.Bounds.Width - 1000, 0, 0, 0);
-            }
             SettingsPane.GetForCurrentView().CommandsRequested += MainPage_CommandsRequested;
-#endif
             base.OnNavigatedTo(e);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-#if !WINDOWS_PHONE_APP
             SettingsPane.GetForCurrentView().CommandsRequested -= MainPage_CommandsRequested;
-#endif
             base.OnNavigatedFrom(e);
         }
 
-        protected override void OnSizeChanged(ApplicationView view)
+        protected override string DetermineVisualState(double width, double height)
         {
-            if (CurrentViewState != ViewState.Snapped)
-            {
-                uiCurrentLocation.Margin = new Thickness(Window.Current.Bounds.Width - 1000, 0, 0, 0);
-            }
-            base.OnSizeChanged(view);
+            return ViewStateHelper.GetViewState(width).ToString();
+        }
+
+        private void SearchBox_OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
+        {
+            ((MainPageViewModel)DataContext ).OnSearchPaneSuggestionsRequested(sender, args);
+        }
+
+        private void SearchBox_OnQuerySubmitted(SearchBox sender, SearchBoxQuerySubmittedEventArgs args)
+        {
+            ((MainPageViewModel)DataContext).OnSearchPaneQuerySubmitted(sender, args);
+            sender.QueryText = "";
+        }
+
+        private void SearchBox_OnResultSuggestionChosen(SearchBox sender, SearchBoxResultSuggestionChosenEventArgs args)
+        {
+            ((MainPageViewModel)DataContext).OnSearchPaneResultSuggestionChosen(sender, args);
+            sender.QueryText = "";
         }
     }
 }

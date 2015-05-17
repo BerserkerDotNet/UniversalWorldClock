@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using TimeZones;
-using UniversalWorldClock.Domain;
 using Windows.Storage;
-using UniversalWorldClock.Views;
+using Newtonsoft.Json;
+using UniversalWorldClock.Domain;
+#if WINDOWS_PHONE_APP
+using UniversalWorldClock.Extensions;
+#endif
 
 namespace UniversalWorldClock.Data
 {
-    public sealed class DataRepository : IDataRepository<CityInfo>
+    public sealed class DataRepository : IDataRepository
     {
         private static bool IsInitialized = false;
-        private static readonly StorageFolder _folder = ApplicationData.Current.LocalFolder;
+        private static readonly StorageFolder _oldFolder = ApplicationData.Current.LocalFolder;
+        private static readonly StorageFolder _folder = ApplicationData.Current.RoamingFolder;
         private const string FILE_NAME = "clocks.dat";
         private static IEnumerable<CityInfo> _cities = Enumerable.Empty<CityInfo>();
         private static IEnumerable<CityInfo> _userCities = Enumerable.Empty<CityInfo>();
@@ -43,7 +44,7 @@ namespace UniversalWorldClock.Data
         {
             if (!IsInitialized)
             {
-                var uri = new System.Uri("ms-appx:///Assets/cities.csv");
+                var uri = new Uri("ms-appx:///Assets/cities.csv");
                 var file = await StorageFile.GetFileFromApplicationUriAsync(uri);
                 var buffer = await FileIO.ReadLinesAsync(file);
                 _cities = buffer.Select(StringToCityInfo)
@@ -60,7 +61,7 @@ namespace UniversalWorldClock.Data
             var file = await OpenFileAsync();
 
             if (file == null)
-                _userCities= Enumerable.Empty<CityInfo>();
+                _userCities = Enumerable.Empty<CityInfo>();
 
             var data = await FileIO.ReadTextAsync(file);
             IEnumerable<CityInfo> clocks;
@@ -131,6 +132,7 @@ namespace UniversalWorldClock.Data
 
         private static Task SaveInternal(IEnumerable<CityInfo> data)
         {
+            _userCities = data;
             return Task.Run(async () =>
             {
                 var jsonData = JsonConvert.SerializeObject(data);
@@ -139,9 +141,10 @@ namespace UniversalWorldClock.Data
 
             });
         }
+
         private static CityInfo StringToCityInfo(string c)
         {
-            var info = c.Split(new[] {';'});
+            var info = c.Split(new[] { ';' });
             return new CityInfo
                        {
                            Id = int.Parse(info[0]),
@@ -164,7 +167,21 @@ namespace UniversalWorldClock.Data
         }
         private static async Task<StorageFile> OpenFileAsync()
         {
-            return await _folder.CreateFileAsync(FILE_NAME, CreationCollisionOption.OpenIfExists);
+            var roamingFile = await _folder.TryGetItemAsync(FILE_NAME);
+
+            if (roamingFile != null)
+                return roamingFile as StorageFile;
+
+            var oldFile = await _oldFolder.TryGetItemAsync(FILE_NAME) as StorageFile;
+            var newFile = await _folder.CreateFileAsync(FILE_NAME, CreationCollisionOption.OpenIfExists);
+            if (oldFile != null)
+            {
+                var data = await FileIO.ReadTextAsync(oldFile);
+                await FileIO.WriteTextAsync(newFile, data);
+                await oldFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
+            }
+
+            return newFile;
         }
     }
 

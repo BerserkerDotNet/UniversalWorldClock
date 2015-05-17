@@ -1,22 +1,20 @@
 ﻿// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
 using System;
-using Windows.UI.Xaml.Input;
-using UniversalWorldClock.Converters;
-using UniversalWorldClock.Runtime;
-using UniversalWorldClock.ViewModels;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
+using Microsoft.Practices.Prism.Mvvm;
+using UniversalWorldClock.Converters;
+using UniversalWorldClock.ViewModels;
 
 namespace UniversalWorldClock.Views
 {
-    public sealed partial class Clock
+    public sealed partial class Clock :IView
     {
         public Clock()
         {
@@ -78,7 +76,7 @@ namespace UniversalWorldClock.Views
                 tb.Text = i.ToString();
                 tb.TextAlignment = TextAlignment.Center;
                 tb.RenderTransformOrigin = new Point(1, 1);
-                tb.Foreground = new SolidColorBrush(Windows.UI.Colors.White);
+                tb.Foreground = new SolidColorBrush(Colors.White);
                 tb.FontSize = converter.Convert(8);
 
                 tb.RenderTransform = new ScaleTransform {ScaleX = 2, ScaleY = 2};
@@ -94,12 +92,12 @@ namespace UniversalWorldClock.Views
             }
         }
 
-        private void Clock_PointerEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Clock_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
             uiClockOptions.Visibility = Visibility.Visible;
         }
 
-        private void Clock_PointerExited(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Clock_PointerExited(object sender, PointerRoutedEventArgs e)
         {
             uiClockOptions.Visibility = Visibility.Collapsed;
         }
@@ -112,11 +110,6 @@ namespace UniversalWorldClock.Views
             var left = (canvas.ActualWidth/2) - (img.ActualWidth/2);
             Canvas.SetLeft(img, left);
             Canvas.SetTop(img, converter.Convert(60));
-        }
-
-        protected override void OnSizeChanged()
-        {
-            (DataContext as ClockViewModel).ApplyViewState(CurrentViewState);
         }
 
         private void SnappedClock_PointerEntered(object sender, PointerRoutedEventArgs e)

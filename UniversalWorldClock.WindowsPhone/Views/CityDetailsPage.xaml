@@ -1,0 +1,125 @@
+﻿<Page
+    x:Class="UniversalWorldClock.Views.CityDetailsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:UniversalWorldClock.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mvvm="using:Microsoft.Practices.Prism.Mvvm"
+    xmlns:designTime="using:UniversalWorldClock.ViewModels.DesignTime"
+    xmlns:converters="using:UniversalWorldClock.Converters"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    mc:Ignorable="d"
+    mvvm:ViewModelLocator.AutoWireViewModel="True" x:Name="Page" NavigationCacheMode="Required">
+    <d:Page.DataContext>
+        <designTime:DesignCityDetailsPageViewModel/>
+    </d:Page.DataContext>
+    <Page.Resources>
+        <converters:DateToShortStringConverter x:Name="DateToShortString"/>
+        <converters:TimeStringConverter x:Key="TimeFormatter"/>
+        <converters:UTCOffsetConverter x:Key="UTCOffsetFormatter"/>
+        <converters:StringConverter x:Key="StringFormatter"/>
+        <converters:CountryCodeToFlagFilePathConveretr x:Key="CountryCodeToFilePathConverter"/>
+    </Page.Resources>
+    <Pivot ItemsSource="{Binding Clocks}" Style="{StaticResource Background}" SelectedItem="{Binding CityInfo, Mode=TwoWay}">
+        <interactivity:Interaction.Behaviors>
+            <core:EventTriggerBehavior EventName="SelectionChanged">
+                <core:InvokeCommandAction Command="{Binding ApplySelection}"/>
+            </core:EventTriggerBehavior>
+        </interactivity:Interaction.Behaviors>
+        <Pivot.HeaderTemplate>
+            <DataTemplate>
+                <TextBlock Text="{Binding Name}"></TextBlock>
+            </DataTemplate>
+        </Pivot.HeaderTemplate>
+        <Pivot.ItemTemplate>
+            <DataTemplate>
+                <ScrollViewer>
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource DetailsTextStyle}" FontWeight="Bold">Local time:</TextBlock>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                            <Image Source="../Assets/time.png" Height="32"></Image>
+                            <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" 
+                               Text="{Binding DataContext.Date, Converter={StaticResource TimeFormatter}, ElementName=Page}" 
+                               TextAlignment="Center" Margin="5,0,0,5"/>
+                        </StackPanel> 
+                        <TextBlock Style="{StaticResource DetailsTextStyle}" FontWeight="Bold">Country:</TextBlock>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                            <Image Source="{Binding CountryCode, Converter={StaticResource CountryCodeToFilePathConverter}}"
+                               Height="32" Margin="0,0,10,0" />
+                            <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" Text="{Binding CountryName}" TextAlignment="Center"/>
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource DetailsTextStyle}" FontWeight="Bold">Date:</TextBlock>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                            <Image Source="../Assets/calendar.png" Height="32"/>
+                            <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" 
+                               FontSize="20"
+                               Text="{Binding DataContext.Date, 
+                                      Converter={StaticResource StringFormatter},ConverterParameter='{}{0:dd MMM yyyy}',
+                                       ElementName=Page}" 
+                               TextAlignment="Left" Margin="5,0,0,0"/>
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource DetailsTextStyle}" FontWeight="Bold">UTC offset:</TextBlock>
+                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                            <Image Source="../Assets/offset.png" Height="32"/>
+                            <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" 
+                               FontSize="18"
+                               Text="{Binding DataContext.UTCOffset, Converter={StaticResource UTCOffsetFormatter}, ElementName=Page}" 
+                               TextAlignment="Left" Margin="5,0,0,0"/>
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource DetailsTextStyle}" FontWeight="Bold">Location:</TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="../Assets/globe.png" Margin="0,5,5,0"/>
+                            <TextBlock Style="{StaticResource DetailsTextStyle}" Text="{Binding DataContext.Coordinates, ElementName=Page}"/>
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource DetailsTextStyle}" FontWeight="Bold" Text="Time zone:"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                            <Image Source="../Assets/worldclock.png" Height="42"/>
+                            <StackPanel Margin="5,0,0,0">
+                                <TextBlock Style="{StaticResource DetailsTextStyle}" Text="{Binding TimeZoneId}" ToolTipService.ToolTip="Microsoft Time Zone"/>
+                                <TextBlock Style="{StaticResource DetailsTextStyle}" Text="{Binding TimeZone}" ToolTipService.ToolTip="IANA Time Zone"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource DetailsTextStyle}" FontWeight="Bold" Text="Sun information:"/>
+                        <GridView ItemsSource="{Binding DataContext.SunInfo, ElementName=Page}" 
+                                  VerticalContentAlignment="Stretch" 
+                                  SelectionMode="None"
+                                  IsDoubleTapEnabled="False"
+                                  IsItemClickEnabled="False">
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center"/>
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+                            <GridView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="0,0,10,0">
+                                        <TextBlock Style="{StaticResource DetailsTextStyle}" HorizontalAlignment="Center" 
+                                                       TextAlignment="Center"
+                                                       Text="{Binding SunRise, Converter={StaticResource DateToShortString}}"/>
+                                        <StackPanel Orientation="Horizontal" ToolTipService.ToolTip="Sunrise">
+                                            <Image Source="../Assets/Sunrise.png"  />
+                                            <TextBlock Style="{StaticResource DetailsTextStyle}" Text="{Binding SunRise, Converter={StaticResource TimeFormatter}}"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" ToolTipService.ToolTip="Sunset">
+                                            <Image Source="../Assets/Sunset.png" />
+                                            <TextBlock Style="{StaticResource DetailsTextStyle}" Text="{Binding SunSet, Converter={StaticResource TimeFormatter}}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </GridView>
+                    </StackPanel>
+                </ScrollViewer>
+            </DataTemplate>
+        </Pivot.ItemTemplate>
+    </Pivot>
+    <Page.BottomAppBar>
+        <CommandBar>
+            <CommandBar.PrimaryCommands>
+                <AppBarButton Icon="Delete" Label="Delete" Command="{Binding Delete}"/>
+            </CommandBar.PrimaryCommands>
+        </CommandBar>
+    </Page.BottomAppBar>
+</Page>

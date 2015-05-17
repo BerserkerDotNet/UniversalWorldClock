@@ -12,7 +12,8 @@ namespace UniversalWorldClock.Tasks.Data
 {
     public sealed class TaskDataRepository
     {
-        private static readonly StorageFolder _folder = ApplicationData.Current.LocalFolder;
+        private static readonly StorageFolder _oldFolder = ApplicationData.Current.LocalFolder;
+        private static readonly StorageFolder _folder = ApplicationData.Current.RoamingFolder;
         private const string FILE_NAME = "Clocks.dat";
       
         public static IAsyncOperation<IEnumerable<CityInfo>> LoadUserCities()
@@ -37,10 +38,23 @@ namespace UniversalWorldClock.Tasks.Data
                                            return clocks;
                                        });
         }
-
         private static async Task<StorageFile> OpenFileAsync()
         {
-            return await _folder.CreateFileAsync(FILE_NAME, CreationCollisionOption.OpenIfExists);
+            var roamingFile = await _folder.TryGetItemAsync(FILE_NAME);
+
+            if (roamingFile != null)
+                return roamingFile as StorageFile;
+
+            var oldFile = await _oldFolder.TryGetItemAsync(FILE_NAME) as StorageFile;
+            var newFile = await _folder.CreateFileAsync(FILE_NAME, CreationCollisionOption.OpenIfExists);
+            if (oldFile != null)
+            {
+                var data = await FileIO.ReadTextAsync(oldFile);
+                await FileIO.WriteTextAsync(newFile, data);
+                await oldFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
+            }
+
+            return newFile;
         }
     }
 
@@ -69,6 +83,21 @@ namespace UniversalWorldClock.Tasks.Data
         public override int GetHashCode()
         {
             return CityName.GetHashCode() ^ TimeZoneId.GetHashCode();
+        }
+    }
+
+    public static class StorageExtensions
+    {
+        public static IAsyncOperation<IStorageItem> TryGetItemAsync(this StorageFolder folder, string filename)
+        {
+            try
+            {
+                return folder.GetItemAsync(filename);
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

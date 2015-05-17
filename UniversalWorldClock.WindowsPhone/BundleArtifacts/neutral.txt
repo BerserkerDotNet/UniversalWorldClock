@@ -1,0 +1,4 @@
+MainPackage=F:\Programs\CSharp\UniversalWorldClock\UniversalWorldClock.WindowsPhone\bin\Release\UniversalWorldClock.WindowsPhone_1.1.0.9_Bundle\UniversalWorldClock.WindowsPhone_1.1.0.9_AnyCPU.appx
+SymbolPackage=F:\Programs\CSharp\UniversalWorldClock\UniversalWorldClock.WindowsPhone\AppPackages\UniversalWorldClock.WindowsPhone_1.1.0.9_Test\UniversalWorldClock.WindowsPhone_1.1.0.9_AnyCPU.appxsym
+ResourcePack=F:\Programs\CSharp\UniversalWorldClock\UniversalWorldClock.WindowsPhone\bin\Release\UniversalWorldClock.WindowsPhone_1.1.0.9_Bundle\UniversalWorldClock.WindowsPhone_1.1.0.9_scale-100.appx
+ResourcePack=F:\Programs\CSharp\UniversalWorldClock\UniversalWorldClock.WindowsPhone\bin\Release\UniversalWorldClock.WindowsPhone_1.1.0.9_Bundle\UniversalWorldClock.WindowsPhone_1.1.0.9_scale-140.appx

@@ -6,14 +6,8 @@ namespace UniversalWorldClock.Runtime
 {
     public class RelayCommand : ICommand
     {
-        #region Declarations
-
         readonly Func<Boolean> _canExecute;
         readonly Action _execute;
-
-        #endregion
-
-        #region Constructors
 
         public RelayCommand(Action execute)
             : this(execute, null)
@@ -28,10 +22,6 @@ namespace UniversalWorldClock.Runtime
             _execute = execute;
             _canExecute = canExecute;
         }
-
-        #endregion
-
-        #region ICommand Members
 
         public event EventHandler CanExecuteChanged;
 
@@ -55,6 +45,5 @@ namespace UniversalWorldClock.Runtime
             }
         }
 
-        #endregion
     }
 }

@@ -23,20 +23,38 @@ namespace UniversalWorldClock.Common
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public void StartTimeShift()
+        {
+            OnTimeShiftStateChanged(new TimeShiftStateChangedArgs(true));
+        }
+        
+        public void EndTimeShift()
+        {
+            OnTimeShiftStateChanged(new TimeShiftStateChangedArgs(false));
+        }
 
-        protected virtual void OnPropertyChanged(string propertyName)
+        protected void OnPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public event EventHandler<EventArgs> TimeShiftCleared;
-
-        public void OnTimeShiftCleared(EventArgs e)
+        protected void OnTimeShiftCleared(EventArgs e)
         {
             EventHandler<EventArgs> handler = TimeShiftCleared;
             if (handler != null) handler(this, e);
         }
+
+        protected void OnTimeShiftStateChanged(TimeShiftStateChangedArgs e)
+        {
+            var handler = TimeShiftStateChanged;
+            if (handler != null) handler(this, e);
+        }
+
+        public event EventHandler<TimeShiftStateChangedArgs> TimeShiftStateChanged;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public event EventHandler<EventArgs> TimeShiftCleared;
     }
 }

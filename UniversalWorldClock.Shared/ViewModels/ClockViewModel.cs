@@ -2,61 +2,51 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using System.Windows.Input;
-using Windows.Foundation;
-using TimeZones;
+using Microsoft.Practices.Prism.Commands;
+using Microsoft.Practices.Prism.Mvvm;
+using Microsoft.Practices.Prism.PubSubEvents;
 using UniversalWorldClock.Common;
 using UniversalWorldClock.Domain;
+using UniversalWorldClock.Messages;
 using UniversalWorldClock.Runtime;
-using UniversalWorldClock.Views;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
+using UniversalWorldClock.Services;
 
 namespace UniversalWorldClock.ViewModels
 {
-    public sealed class ClockViewModel : ViewModelBase
+    public class ClockViewModel : ViewModel, IClockListner
     {
-        private readonly CityInfo _info;
-        private readonly TimeShiftProvider _timeShiftProvider;
-        private ITimeZoneEx _timeZoneService;
-        private static readonly DispatcherTimer _timer = new DispatcherTimer();
+        private CityInfo _info;
+        private readonly IEventAggregator _eventAggregator;
+        private readonly IClock _clock;
+
         private DateTime _date;
 
-        static ClockViewModel()
+        public ClockViewModel(IEventAggregator eventAggregator, IClock clock)
         {
-            _timer.Interval = TimeSpan.FromSeconds(1);
-            _timer.Start();
-            _timer.Tick += ViewStateTracker;
+            _eventAggregator = eventAggregator;
+            _clock = clock;
+            Delete = new RelayCommand(DeleteItem);
+            Initialize = new DelegateCommand<CityInfo>(InitializeInternal);
         }
 
-        public ClockViewModel(CityInfo info, TimeShiftProvider timeShiftProvider)
+        private void InitializeInternal(CityInfo cityInfo)
         {
-            _info = info;
-            _timeShiftProvider = timeShiftProvider;
-            _timeZoneService = TimeZoneService.FindSystemTimeZoneById(_info.TimeZoneId);
-            _timer.Tick += OnTimerTick;
-            Delete = new RelayCommand(() => ViewModelStorage.Main.DeleteClock(_info)); //Clean-up
-            CalculateTime();
-            _timeShiftProvider.PropertyChanged += (s, e) => CalculateTime();
+            Info = cityInfo;
+            _eventAggregator.GetEvent<BeforeHideClocksMessage>().Subscribe(OnBeforeHideClocks);
+            _clock.Register(this);
         }
-
-        void OnTimerTick(object sender, object e)
-        {
-            CalculateTime();
-        }
-
-        private void CalculateTime()
-        {
-            var dateTimeOffset = _timeZoneService.ConvertTime(DateTime.Now);
-            Date = dateTimeOffset.DateTime + _timeShiftProvider.TimeShift;
-        } 
 
         public string CityName
         {
             get { return _info.Name; }
-        } 
+        }
+
+        public CityInfo Info {
+            get { return _info; }
+            set { SetProperty(ref _info, value); }
+        }
 
         public string CountryName
         {
@@ -68,21 +58,13 @@ namespace UniversalWorldClock.ViewModels
             get { return _date; }
             set
             {
-                if (_date!=value)
-                {
-                    _date = value;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref _date, value);
             }
         }
 
         public TimeSpan UTCOffset
         {
-            get
-            {
-                var dateTimeOffset = _timeZoneService.ConvertTime(DateTime.Now);
-                return dateTimeOffset.Offset;
-            }
+            get { return _clock.GetOffset(_info.TimeZoneId); }
         }
 
         public string CountryCode
@@ -117,19 +99,6 @@ namespace UniversalWorldClock.ViewModels
             }
         }
 
-        private IEnumerable<SunInfo> GetSunInfo()
-        {
-            for (int i = 0; i < 3; i++)
-            {
-                var dateTime = Date.AddDays(i);
-                var sunInfo = GeoHelper.GetSunInfo(dateTime, _info.Latitude, -_info.Longitude);
-                sunInfo.SunSet = _timeZoneService.ConvertTime(sunInfo.SunSet).DateTime;
-                sunInfo.SunRise = _timeZoneService.ConvertTime(sunInfo.SunRise).DateTime;
-
-                yield return sunInfo;
-            }
-        }
-
         public bool IsTimeModifierVisible
         {
             get
@@ -140,36 +109,41 @@ namespace UniversalWorldClock.ViewModels
 
         public ICommand Delete { get; private set; }
 
-        public void ApplyViewState(ViewState state)
+        public ICommand Initialize { get; private set; }
+
+        private void DeleteItem()
         {
-            _timer.Interval = CalculateTimerInterval(state);
+            OnBeforeHideClocks(null);
+            _eventAggregator.GetEvent<DeleteCityMessage>().Publish(_info);
         }
 
-        private static void ViewStateTracker(object sender, object e)
+        private IEnumerable<SunInfo> GetSunInfo()
         {
-            var bounds = Window.Current.Bounds;
-            var windowSize = new Size(bounds.Width, bounds.Height);
-            _timer.Interval = CalculateTimerInterval(ViewStateHelper.GetViewState(ApplicationView.GetForCurrentView(), windowSize));
-        }
-
-        private static TimeSpan CalculateTimerInterval(ViewState state)
-        {
-            if (state == ViewState.FullScreenLandscape)
-                return TimeSpan.FromSeconds(1);
-
-            if ((state == ViewState.Snapped || state== ViewState.Narrow) && DateTime.Now.Second == 0)
+            for (int i = 0; i < 3; i++)
             {
-                return TimeSpan.FromMinutes(1);
-            }
+                var dateTime = Date.AddDays(i);
+                var sunInfo = GeoHelper.GetSunInfo(dateTime, _info.Latitude, -_info.Longitude);
+                sunInfo.SunSet = _clock.ConvertTime(_info.TimeZoneId, sunInfo.SunSet);
+                sunInfo.SunRise = _clock.ConvertTime(_info.TimeZoneId, sunInfo.SunRise);
 
-            if ((state == ViewState.Snapped || state == ViewState.Narrow) && DateTime.Now.Second != 0)
-            {
-                var interval = (60 - DateTime.Now.Second);
-                return TimeSpan.FromSeconds(interval);
+                yield return sunInfo;
             }
-
-            return TimeSpan.FromSeconds(1);
         }
 
+        private void OnBeforeHideClocks(object obj)
+        {
+            _clock.UnRegister(this);
+        }
+
+        public CityInfo CityInfo
+        {
+            get { return _info; }
+        }
+
+        public void TickTack(DateTime date)
+        {
+            Date = date;
+        }
     }
+
 }
